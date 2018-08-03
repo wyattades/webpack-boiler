@@ -1,5 +1,5 @@
 # Webpack Boiler[plate]
-My personal webpack configuration. Feel free to fork!
+Another webpack configuration boilerplate
 
 ## Features
 - Babel (es6)
