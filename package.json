@@ -2,6 +2,16 @@
   "name": "webpack-boiler",
   "version": "0.0.1",
   "main": "index.js",
+  "keywords": [
+    "webpack",
+    "boiler",
+    "boilerplate",
+    "babel",
+    "react",
+    "hot",
+    "pug",
+    "jade"
+  ],
   "description": "Babel, React, and HTML template config",
   "license": "UNLICENSE",
   "repository": {
