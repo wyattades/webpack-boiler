@@ -31,207 +31,212 @@ PATHS.entry = path.resolve(PATHS.src, 'index.js');
 * @param {string} config.googleAnalytics
 * @param {string} config.basename
 * @param {string} config.url
+* @param {number} config.devPort
 */
-module.exports = ({
-react,
-pages = [{}],
-env = {},
-googleAnalytics,
-entry = {},
-basename = '',
-url = '',
-}) => {
+module.exports = (config) => {
 
-// Reformat arguments:
+  let {
+    react,
+    pages = [{}],
+    env = {},
+    googleAnalytics,
+    entry = {},
+    basename = '',
+    url = '',
+    devPort = 8080,
+  } = config || {};
 
-if (!Array.isArray(pages)) pages = [pages];
+  // Reformat arguments:
 
-entry = {
-  index: PATHS.entry,
-  ...entry,
-};
+  if (!Array.isArray(pages)) pages = [pages];
 
-const definedEnvs = {
-  NODE_ENV: JSON.stringify(process.env.NODE_ENV),
-  BASENAME: JSON.stringify(basename),
-  URL: JSON.stringify(!DEV ? url : 'http://localhost:8080'),
-};
-for (const key in env) {
-  definedEnvs[key] = JSON.stringify(env[key]);
-}
+  entry = {
+    index: PATHS.entry,
+    ...entry,
+  };
 
-if (basename)
-  basename = basename.replace(/(^\/)|(\/$)/g, '');
+  const definedEnvs = {
+    DEV,
+    NODE_ENV: JSON.stringify(process.env.NODE_ENV),
+    BASENAME: JSON.stringify(basename),
+    URL: JSON.stringify(!DEV ? url : `http://localhost:${devPort}`),
+  };
+  for (const key in env) {
+    definedEnvs[key] = JSON.stringify(env[key]);
+  }
 
-// base Webpack config
-const baseConfig = {
+  if (basename)
+    basename = '/' + basename.replace(/(^\/)|(\/$)/g, '');
 
-  mode: process.env.NODE_ENV,
 
-  context: __dirname,
-  
-  module: {
-    rules: [
-      {
-        test: /\.worker\.js$/,
-        loader: 'worker-loader',
-      }, {
-        test: /\.js$/,
-        use: [{
-          loader: 'babel-loader',
-          options: {
-            presets: [
-              ...react ? ['@babel/react'] : [],
-              '@babel/env'
-            ],
-            plugins: [
-              ...react ? ['react-hot-loader/babel'] : [],
-              '@babel/plugin-proposal-class-properties'
-            ],
-          },
-        }],
-        include: PATHS.src,
-      }, {
-        test: /\.pug$/,
-        loader: 'pug-loader',
-      }, {
-        test: /\.s?css$/,
-        use: [
-          DEV ? 'style-loader' : MiniCssExtractPlugin.loader,
-          {
-            loader: 'css-loader',
+  // base Webpack config
+  const baseConfig = {
+
+    mode: process.env.NODE_ENV,
+
+    context: __dirname,
+    
+    module: {
+      rules: [
+        {
+          test: /\.worker\.js$/,
+          loader: 'worker-loader',
+        }, {
+          test: /\.js$/,
+          use: [{
+            loader: 'babel-loader',
             options: {
-              autoprefixer: false,
+              presets: [
+                ...react ? ['@babel/react'] : [],
+                '@babel/env'
+              ],
+              plugins: [
+                ...react ? ['react-hot-loader/babel'] : [],
+                '@babel/plugin-proposal-class-properties'
+              ],
             },
-          },
-          {
-            loader: 'postcss-loader',
+          }],
+          include: PATHS.src,
+        }, {
+          test: /\.pug$/,
+          loader: 'pug-loader',
+        }, {
+          test: /\.s?css$/,
+          use: [
+            DEV ? 'style-loader' : MiniCssExtractPlugin.loader,
+            {
+              loader: 'css-loader',
+              options: {
+                autoprefixer: false,
+              },
+            },
+            {
+              loader: 'postcss-loader',
+              options: {
+                ident: 'postcss',
+                plugins: () => [ autoprefixer() ],
+              },
+            },
+            'sass-loader',
+          ],
+          include: PATHS.css,
+        }, {
+          test: /\.(gif|jpe?g|png|svg|ttf|eot|woff|woff2)(\?\w+=[\d.]+)?$/,
+          use: [ {
+            loader: 'url-loader',
             options: {
-              ident: 'postcss',
-              plugins: () => [ autoprefixer() ],
+              limit: 10000,
+              name: 'asset/[name].[ext]',
             },
-          },
-          'sass-loader',
-        ],
-        include: PATHS.css,
-      }, {
-        test: /\.(gif|jpe?g|png|svg|ttf|eot|woff|woff2)(\?\w+=[\d.]+)?$/,
-        use: [ {
-          loader: 'url-loader',
+          } ],
+        }, {
+          loader: 'file-loader',
           options: {
-            limit: 10000,
-            name: 'asset/[name].[ext]',
+            name: '[name].[ext]',
           },
-        } ],
-      }, {
-        loader: 'file-loader',
-        options: {
-          name: '[name].[ext]',
+          include: PATHS.static,
         },
-        include: PATHS.static,
-      },
-    ],
-  },
-};
-
-// base Webpack plugins
-const sharedPlugins = [
-
-  new webpack.DefinePlugin({
-    'process.env': definedEnvs,
-    ...DEV ? { DEV: true } : {},
-  }),
-
-  new MiniCssExtractPlugin({
-    filename: DEV ? '[name].css' : '[name].[hash].css',
-    allChunks: true,
-  }),
-
-  ...pages.map((page) => new HtmlWebpackPlugin({
-
-    template: PATHS.template, // required
-    inject: false, // required
-    appMountId: react ? 'react-root' : null,
-    mobile: true,
-
-    ...(!DEV ? {
-      minify: {
-        collapseWhitespace: true,
-        preserveLineBreaks: true,
-        minifyJS: true,
-      },
-      googleAnalytics,
-    } : {}),
-
-    ...page,
-  })),
-  
-];
-
-if (!DEV) { // PRODUCTION CONFIG
-
-  return {
-    
-    entry,
-
-    output: {
-      path: PATHS.dist,
-      publicPath: `${basename}/`,
-      filename: '[name].[chunkhash].js',
+      ],
     },
+  };
 
-    plugins: [
+  // base Webpack plugins
+  const sharedPlugins = [
 
-      new CleanWebpackPlugin([ PATHS.dist ], { allowExternal: true }),
+    new webpack.DefinePlugin({
+      'process.env': definedEnvs,
+    }),
 
-      ...sharedPlugins,
-            
-      new webpack.optimize.OccurrenceOrderPlugin(),
+    new MiniCssExtractPlugin({
+      filename: DEV ? '[name].css' : '[name].[hash].css',
+      allChunks: true,
+    }),
 
-      new UglifyJsPlugin({
-        parallel: true,
-      }),
+    ...pages.map((page) => new HtmlWebpackPlugin({
 
-      new OptimizeCssAssetsPlugin({
-        cssProcessorOptions: { discardComments: { removeAll: true } },
-      }),
+      ...(!DEV ? {
+        minify: {
+          collapseWhitespace: true,
+          preserveLineBreaks: true,
+          minifyJS: true,
+        },
+        googleAnalytics,
+      } : {}),
+
+      appMountId: react ? 'root' : null,
+
+      ...page,
+
+      inject: false, // required
+      template: page.template ? path.resolve(PATHS.callerDirname, page.template) : PATHS.template, // required
+    })),
+    
+  ];
+
+  if (!DEV) { // PRODUCTION CONFIG
+
+    return {
       
-    ],
+      entry,
 
-    ...baseConfig,
-  };
+      output: {
+        path: PATHS.dist,
+        publicPath: `${basename}/`,
+        filename: '[name].[chunkhash].js',
+      },
 
-} else { // DEVELOPMENT CONFIG
+      plugins: [
 
-  return {
+        new CleanWebpackPlugin([ PATHS.dist ], { allowExternal: true }),
 
-    devtool: 'eval-source-map',
+        ...sharedPlugins,
+              
+        new webpack.optimize.OccurrenceOrderPlugin(),
 
-    output: {
-      publicPath: '/',
-      globalObject: 'this',
-    },
+        new UglifyJsPlugin({
+          parallel: true,
+        }),
 
-    devServer: {
-      hot: true,
-      historyApiFallback: true,
-      port: 8080,
-      watchContentBase: true,
-    },
+        new OptimizeCssAssetsPlugin({
+          cssProcessorOptions: { discardComments: { removeAll: true } },
+        }),
+        
+      ],
 
-    entry,
+      ...baseConfig,
+    };
 
-    plugins: [
+  } else { // DEVELOPMENT CONFIG
 
-      ...sharedPlugins,
+    return {
 
-      new webpack.NamedModulesPlugin(),
+      devtool: 'eval-source-map',
 
-      new webpack.HotModuleReplacementPlugin(),
-    ],
-    
-    ...baseConfig,
-  };
+      output: {
+        publicPath: '/',
+        globalObject: 'this',
+      },
 
-}
+      devServer: {
+        hot: true,
+        historyApiFallback: true,
+        port: devPort,
+        watchContentBase: true,
+      },
+
+      entry,
+
+      plugins: [
+
+        ...sharedPlugins,
+
+        new webpack.NamedModulesPlugin(),
+
+        new webpack.HotModuleReplacementPlugin(),
+      ],
+      
+      ...baseConfig,
+    };
+
+  }
 };
