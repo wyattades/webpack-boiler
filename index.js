@@ -1,6 +1,6 @@
 
 if (!(process.env.NODE_ENV in { production: 0, development: 0 }))
-  throw new Error('Please set NODE_ENV environment variable to "production" or "development"');
+throw new Error('Please set NODE_ENV environment variable to "production" or "development"');
 
 const webpack = require('webpack');
 const path = require('path');
@@ -22,216 +22,216 @@ PATHS.static = path.resolve(PATHS.src, 'static');
 PATHS.entry = path.resolve(PATHS.src, 'index.js');
 
 /**
- * Custom webpack config
- * @param {Object} config
- * @param {boolean} config.react
- * @param {Object[]} config.pages
- * @param {Object} config.env
- * @param {Object} config.entry
- * @param {string} config.googleAnalytics
- * @param {string} config.basename
- * @param {string} config.url
- */
+* Custom webpack config
+* @param {Object} config
+* @param {boolean} config.react
+* @param {Object[]} config.pages
+* @param {Object} config.env
+* @param {Object} config.entry
+* @param {string} config.googleAnalytics
+* @param {string} config.basename
+* @param {string} config.url
+*/
 module.exports = ({
-  react,
-  pages = [{}],
-  env = {},
-  googleAnalytics,
-  entry = {},
-  basename = '',
-  url = '',
+react,
+pages = [{}],
+env = {},
+googleAnalytics,
+entry = {},
+basename = '',
+url = '',
 }) => {
 
-  // Reformat arguments:
+// Reformat arguments:
 
-  if (!Array.isArray(pages)) pages = [pages];
+if (!Array.isArray(pages)) pages = [pages];
 
-  entry = {
-    index: PATHS.entry,
-    ...entry,
-  };
+entry = {
+  index: PATHS.entry,
+  ...entry,
+};
 
-  const definedEnvs = {
-    NODE_ENV: JSON.stringify(process.env.NODE_ENV),
-    BASENAME: JSON.stringify(basename),
-    URL: JSON.stringify(!DEV ? url : 'http://localhost:8080'),
-  };
-  for (const key in env) {
-    definedEnvs[key] = JSON.stringify(env[key]);
-  }
+const definedEnvs = {
+  NODE_ENV: JSON.stringify(process.env.NODE_ENV),
+  BASENAME: JSON.stringify(basename),
+  URL: JSON.stringify(!DEV ? url : 'http://localhost:8080'),
+};
+for (const key in env) {
+  definedEnvs[key] = JSON.stringify(env[key]);
+}
 
-  if (basename)
-    basename = '/' + basename.replace(/(^\/)|(\/$)/g, '');
+if (basename)
+  basename = basename.replace(/(^\/)|(\/$)/g, '');
 
-  // base Webpack config
-  const baseConfig = {
+// base Webpack config
+const baseConfig = {
 
-    mode: process.env.NODE_ENV,
+  mode: process.env.NODE_ENV,
 
-    context: __dirname,
-    
-    module: {
-      rules: [
-        {
-          test: /\.worker\.js$/,
-          loader: 'worker-loader',
-        }, {
-          test: /\.js$/,
-          use: [{
-            loader: 'babel-loader',
-            options: {
-              presets: [
-                ...react ? ['@babel/react'] : [],
-                '@babel/env'
-              ],
-              plugins: [
-                ...react ? ['react-hot-loader/babel'] : [],
-                '@babel/plugin-proposal-class-properties'
-              ],
-            },
-          }],
-          include: PATHS.src,
-        }, {
-          test: /\.pug$/,
-          loader: 'pug-loader',
-        }, {
-          test: /\.s?css$/,
-          use: [
-            DEV ? 'style-loader' : MiniCssExtractPlugin.loader,
-            {
-              loader: 'css-loader',
-              options: {
-                autoprefixer: false,
-              },
-            },
-            {
-              loader: 'postcss-loader',
-              options: {
-                ident: 'postcss',
-                plugins: () => [ autoprefixer() ],
-              },
-            },
-            'sass-loader',
-          ],
-          include: PATHS.css,
-        }, {
-          test: /\.(gif|jpe?g|png|svg|ttf|eot|woff|woff2)(\?\w+=[\d.]+)?$/,
-          use: [ {
-            loader: 'url-loader',
-            options: {
-              limit: 10000,
-              name: 'asset/[name].[ext]',
-            },
-          } ],
-        }, {
-          loader: 'file-loader',
+  context: __dirname,
+  
+  module: {
+    rules: [
+      {
+        test: /\.worker\.js$/,
+        loader: 'worker-loader',
+      }, {
+        test: /\.js$/,
+        use: [{
+          loader: 'babel-loader',
           options: {
-            name: '[name].[ext]',
+            presets: [
+              ...react ? ['@babel/react'] : [],
+              '@babel/env'
+            ],
+            plugins: [
+              ...react ? ['react-hot-loader/babel'] : [],
+              '@babel/plugin-proposal-class-properties'
+            ],
           },
-          include: PATHS.static,
+        }],
+        include: PATHS.src,
+      }, {
+        test: /\.pug$/,
+        loader: 'pug-loader',
+      }, {
+        test: /\.s?css$/,
+        use: [
+          DEV ? 'style-loader' : MiniCssExtractPlugin.loader,
+          {
+            loader: 'css-loader',
+            options: {
+              autoprefixer: false,
+            },
+          },
+          {
+            loader: 'postcss-loader',
+            options: {
+              ident: 'postcss',
+              plugins: () => [ autoprefixer() ],
+            },
+          },
+          'sass-loader',
+        ],
+        include: PATHS.css,
+      }, {
+        test: /\.(gif|jpe?g|png|svg|ttf|eot|woff|woff2)(\?\w+=[\d.]+)?$/,
+        use: [ {
+          loader: 'url-loader',
+          options: {
+            limit: 10000,
+            name: 'asset/[name].[ext]',
+          },
+        } ],
+      }, {
+        loader: 'file-loader',
+        options: {
+          name: '[name].[ext]',
         },
-      ],
+        include: PATHS.static,
+      },
+    ],
+  },
+};
+
+// base Webpack plugins
+const sharedPlugins = [
+
+  new webpack.DefinePlugin({
+    'process.env': definedEnvs,
+    ...DEV ? { DEV: true } : {},
+  }),
+
+  new MiniCssExtractPlugin({
+    filename: DEV ? '[name].css' : '[name].[hash].css',
+    allChunks: true,
+  }),
+
+  ...pages.map((page) => new HtmlWebpackPlugin({
+
+    template: PATHS.template, // required
+    inject: false, // required
+    appMountId: react ? 'react-root' : null,
+    mobile: true,
+
+    ...(!DEV ? {
+      minify: {
+        collapseWhitespace: true,
+        preserveLineBreaks: true,
+        minifyJS: true,
+      },
+      googleAnalytics,
+    } : {}),
+
+    ...page,
+  })),
+  
+];
+
+if (!DEV) { // PRODUCTION CONFIG
+
+  return {
+    
+    entry,
+
+    output: {
+      path: PATHS.dist,
+      publicPath: `${basename}/`,
+      filename: '[name].[chunkhash].js',
     },
+
+    plugins: [
+
+      new CleanWebpackPlugin([ PATHS.dist ], { allowExternal: true }),
+
+      ...sharedPlugins,
+            
+      new webpack.optimize.OccurrenceOrderPlugin(),
+
+      new UglifyJsPlugin({
+        parallel: true,
+      }),
+
+      new OptimizeCssAssetsPlugin({
+        cssProcessorOptions: { discardComments: { removeAll: true } },
+      }),
+      
+    ],
+
+    ...baseConfig,
   };
 
-  // base Webpack plugins
-  const sharedPlugins = [
+} else { // DEVELOPMENT CONFIG
 
-    new webpack.DefinePlugin({
-      'process.env': definedEnvs,
-      ...DEV ? { DEV: true } : {},
-    }),
+  return {
 
-    new MiniCssExtractPlugin({
-      filename: DEV ? '[name].css' : '[name].[hash].css',
-      allChunks: true,
-    }),
+    devtool: 'eval-source-map',
 
-    ...pages.map((page) => new HtmlWebpackPlugin({
+    output: {
+      publicPath: '/',
+      globalObject: 'this',
+    },
 
-      template: PATHS.template, // required
-      inject: false, // required
-      appMountId: react ? 'react-root' : null,
-      mobile: true,
+    devServer: {
+      hot: true,
+      historyApiFallback: true,
+      port: 8080,
+      watchContentBase: true,
+    },
 
-      ...(!DEV ? {
-        minify: {
-          collapseWhitespace: true,
-          preserveLineBreaks: true,
-          minifyJS: true,
-        },
-        googleAnalytics,
-      } : {}),
+    entry,
 
-      ...page,
-    })),
+    plugins: [
+
+      ...sharedPlugins,
+
+      new webpack.NamedModulesPlugin(),
+
+      new webpack.HotModuleReplacementPlugin(),
+    ],
     
-  ];
+    ...baseConfig,
+  };
 
-  if (!DEV) { // PRODUCTION CONFIG
-
-    return {
-      
-      entry,
-
-      output: {
-        path: PATHS.dist,
-        publicPath: `${basename}/`,
-        filename: '[name].[chunkhash].js',
-      },
-
-      plugins: [
-
-        new CleanWebpackPlugin([ 'dist' ]),
-
-        ...sharedPlugins,
-              
-        new webpack.optimize.OccurrenceOrderPlugin(),
-
-        new UglifyJsPlugin({
-          parallel: true,
-        }),
-
-        new OptimizeCssAssetsPlugin({
-          cssProcessorOptions: { discardComments: { removeAll: true } },
-        }),
-        
-      ],
-
-      ...baseConfig,
-    };
-
-  } else { // DEVELOPMENT CONFIG
-
-    return {
-
-      devtool: 'eval-source-map',
-
-      output: {
-        publicPath: '/',
-        globalObject: 'this',
-      },
-
-      devServer: {
-        hot: true,
-        historyApiFallback: true,
-        port: 8080,
-        watchContentBase: true,
-      },
-
-      entry,
-
-      plugins: [
-
-        ...sharedPlugins,
-
-        new webpack.NamedModulesPlugin(),
-
-        new webpack.HotModuleReplacementPlugin(),
-      ],
-      
-      ...baseConfig,
-    };
-
-  }
+}
 };
