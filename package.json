@@ -1,6 +1,6 @@
 {
   "name": "webpack-boiler",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "main": "index.js",
   "description": "Babel, React, and HTML template config",
   "license": "UNLICENSE",
