@@ -60,6 +60,9 @@ module.exports = ({
     definedEnvs[key] = JSON.stringify(env[key]);
   }
 
+  if (basename)
+    basename = '/' + basename.replace(/(^\/)|(\/$)/g, '');
+
   // base Webpack config
   const baseConfig = {
 
@@ -70,6 +73,9 @@ module.exports = ({
     module: {
       rules: [
         {
+          test: /\.worker\.js$/,
+          loader: 'worker-loader',
+        }, {
           test: /\.js$/,
           use: [{
             loader: 'babel-loader',
@@ -203,12 +209,14 @@ module.exports = ({
 
       output: {
         publicPath: '/',
+        globalObject: 'this',
       },
 
       devServer: {
         hot: true,
         historyApiFallback: true,
         port: 8080,
+        watchContentBase: true,
       },
 
       entry,
