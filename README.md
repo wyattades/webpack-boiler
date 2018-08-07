@@ -1,63 +1,79 @@
 # Webpack Boiler[plate]
+Another webpack configuration boilerplate. Great for modern React PWAs.
+
 [![npm version](https://badge.fury.io/js/webpack-boiler.svg)](https://badge.fury.io/js/webpack-boiler)
 
-Another webpack configuration boilerplate. Great for modern React PWAs.
+In your project root, create the file __webpack.config.js__ containing:
+```js
+module.exports = require('webpack-boiler')({
+  react: true,
+  pages: [{
+    title: 'Hello World!',
+  }],
+});
+```
 
 ## Features
 - Babel (es6 and React)
+- Sass
 - HTML templates (Jade / [Pug](https://pugjs.org))
 - Web workers (any file ending in `.worker.js`)
-- Everything hot reloads
+- Uglified/minified JS, CSS, & HTML
+- CSS [autoprefixer](https://github.com/postcss/autoprefixer)
+- Hot Reloading (For React, follow the [react-hot-loader API](https://github.com/gaearon/react-hot-loader#getting-started))
 
 ## Install
 ```bash
-$ npm i -D webpack-boiler
+$ npm i --save-dev webpack-boiler
 ```
 
 ## Usage
-Create the file __webpack.config.js__ with the following contents:
-```JavaScript
-// ALL config parameters are optional
-module.exports = require('webpack-boiler')({
-  react: false, // <- default
-  pages: [{ // config for each instance of HTMLWebpackPlugin
-    title: 'Title of page!',
-    filename: 'index.html', // Output filename
-    chunks: ['main','vendor'], // Custom chunks
-    favicon: './src/favicon.ico', // Path to favicon
-    scripts: [{ src: '/script.js' }], // Custom <head> script attributes
-    bodyScripts: [], // Same as above, but at end of <body>
-    links: [{ href: '/style.css', rel: 'stylesheet' }], // Custom link attributes
-    meta: [{ name: 'foo', content: 'bar' }], // Custom <meta> attributes
-    lang: 'en-US', // <- default
-    appMountId: 'root', // <- default if react is enabled
-    mobile: true, // <- default. Set to false to disable mobile viewport
-    cache: true, // <- default. Set to false to disable HTML caching
-    template: './src/custom_template.pug', // Custom page template (see below)
-  }],
-  env: { // Pass process.env variables to bundle
-    PRIVATE_KEY: 'abc',
-  },
-  entry: { // Webpack entry points
-    some_chunk: './src/some_chunk.js',
-  },
-  googleAnalytics: 'U-XXXXXXX', // Google Analytics ID
-  basename: 'good-for-gh-pages', // Basename of website
-  url: 'https://mysite.com', // Passed to process.env as `URL` (set to `http://localhost:<devPort>` during development)
-  devPort: 8080, // <- default
-});
-
-```
-
-Then run one of:
-- __Development__:
+- __Development__ (your project will hot-reload at http://localhost:8080):
 ```bash
 $ NODE_ENV=development webpack-dev-server
 ```
-- __Production__:
+- __Production Build__:
 ```bash
 $ NODE_ENV=production webpack
 ```
+
+## API
+
+### `webpackBoiler([config])`
+
+**Returns**: <code>Object</code> - [webpackConfigObject](https://webpack.js.org/configuration/)  
+
+```js
+var webpackBoiler = require('webpack-boiler');
+var webpackConfigObject = webpackBoiler({ /* config */ });
+```
+
+### Config Parameters
+All config parameters are optional
+
+| Name | Type | Default | Description |
+| --- | --- | --- | --- |
+| [react] | <code>boolean</code> | <code>false</code> | Enable React Babel and react-hot-loader |
+| [entry] | <code>Object</code> | <code>{}</code> | Webpack entry points. Has default entry: `main: 'src/index.js'` (Use absolute paths) |
+| [env] | <code>Object</code> | <code>{}</code> | Variables passed to source code in `process.env` |
+| [googleAnalytics] | <code>string</code> |  | Google Analytics ID |
+| [basename] | <code>string</code> |  | Basename of website. This is helpful for GithubPages websites e.g. `webpack-boiler` for `wyattades.github.io/webpack-boiler` |
+| [url] | <code>string</code> |  | Passed to process.env as `URL` (is set to `http://localhost:<devPort>` during development) |
+| [devPort] | <code>number</code> | <code>8080</code> | Development port number |
+| [pages] | <code>Array.&lt;Object&gt;</code> | <code>[{}]</code> | Array of html-webpack-plugin config objects |
+| [pages[].title] | <code>string</code> |  | Title of page |
+| [pages[].filename] | <code>string</code> | <code>&quot;index.html&quot;</code> | Output filename |
+| [pages[].chunks] | <code>Array.&lt;string&gt;</code> | <code>[]</code> | Webpack chunks to include e.g. `['main','vendor']` |
+| [pages[].favicon] | <code>string</code> |  | Path to favicon |
+| [pages[].scripts] | <code>Array.&lt;Object&gt;</code> | <code>[]</code> | Array of `script` element attributes appended to `head` e.g. `[{ src: 'script.js' }]` |
+| [pages[].bodyScripts] | <code>Array.&lt;Object&gt;</code> | <code>[]</code> | Same as `.scripts` but appended to `body` |
+| [pages[].links] | <code>Array.&lt;Object&gt;</code> | <code>[]</code> | Same as `.scripts` but for `link` element |
+| [pages[].meta] | <code>Array.&lt;Object&gt;</code> | <code>[]</code> | Same as `.scripts` but for `meta` element |
+| [pages[].lang] | <code>string</code> | <code>&quot;en-US&quot;</code> | HTML language |
+| [pages[].appMountId] | <code>string</code> | <code>&quot;root&quot;</code> | React root element ID. Only enabled if `react=true` |
+| [pages[].cache] | <code>boolean</code> | <code>true</code> | Set to false to disable page caching |
+| [pages[].mobile] | <code>boolean</code> | <code>true</code> | Set to false to disable mobile viewport |
+| [pages[].template] | <code>string</code> |  | Relative path to custom template |
 
 
 ## Custom Template

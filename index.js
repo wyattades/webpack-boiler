@@ -1,6 +1,35 @@
+/**
+ * @module webpackBoiler
+ */
+
+/**
+ * @typedef {Object} BoilerConfig
+ * @property {boolean} [react=false] - Enable React Babel and react-hot-loader
+ * @property {Object} [entry={}] - Webpack entry points. Has default entry: `main: 'src/index.js'` (Use absolute paths)
+ * @property {Object} [env={}] - Variables passed to source code in `process.env`
+ * @property {string} [googleAnalytics] - Google Analytics ID
+ * @property {string} [basename] - Basename of website. This is helpful for GithubPages websites e.g. `webpack-boiler` for `wyattades.github.io/webpack-boiler`
+ * @property {string} [url] - Passed to process.env as `URL` (is set to `http://localhost:<devPort>` during development)
+ * @property {number} [devPort=8080] - Development port number
+ * @property {Object[]} [pages=[{}]] - Array of html-webpack-plugin config objects
+ * @property {string} [pages[].title] - Title of page
+ * @property {string} [pages[].filename=index.html] - Output filename
+ * @property {string[]} [pages[].chunks=[]] - Webpack chunks to include e.g. `['main','vendor']`
+ * @property {string} [pages[].favicon] - Path to favicon
+ * @property {Object[]} [pages[].scripts=[]] - Array of `script` element attributes appended to `head` e.g. `[{ src: 'script.js' }]`
+ * @property {Object[]} [pages[].bodyScripts=[]] - Same as `.scripts` but appended to `body`
+ * @property {Object[]} [pages[].links=[]] - Same as `.scripts` but for `link` element
+ * @property {Object[]} [pages[].meta=[]] - Same as `.scripts` but for `meta` element
+ * @property {string} [pages[].lang=en-US] - HTML language
+ * @property {string} [pages[].appMountId=root] - React root element ID. Only enabled if `react=true`
+ * @property {boolean} [pages[].cache=true] - Set to false to disable page caching
+ * @property {boolean} [pages[].mobile=true] - Set to false to disable mobile viewport
+ * @property {string} [pages[].template] - Relative path to custom template
+ */
+
 
 if (!(process.env.NODE_ENV in { production: 0, development: 0 }))
-throw new Error('Please set NODE_ENV environment variable to "production" or "development"');
+  throw new Error('Please set NODE_ENV environment variable to "production" or "development"');
 
 const webpack = require('webpack');
 const path = require('path');
@@ -22,16 +51,8 @@ PATHS.static = path.resolve(PATHS.src, 'static');
 PATHS.entry = path.resolve(PATHS.src, 'index.js');
 
 /**
-* Custom webpack config
-* @param {Object} config
-* @param {boolean} config.react
-* @param {Object[]} config.pages
-* @param {Object} config.env
-* @param {Object} config.entry
-* @param {string} config.googleAnalytics
-* @param {string} config.basename
-* @param {string} config.url
-* @param {number} config.devPort
+ * @param {BoilerConfig} [config]
+ * @returns {Object} [webpackConfigObject](https://webpack.js.org/configuration/)
 */
 module.exports = (config) => {
 
