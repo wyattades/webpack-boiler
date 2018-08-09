@@ -1,6 +1,6 @@
 {
   "name": "webpack-boiler",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "main": "index.js",
   "keywords": [
     "webpack",
@@ -22,10 +22,10 @@
     "node": ">=8.4.0"
   },
   "dependencies": {
-    "@babel/core": "^7.0.0-beta.55",
-    "@babel/plugin-proposal-class-properties": "^7.0.0-beta.54",
-    "@babel/preset-env": "^7.0.0-beta.55",
-    "@babel/preset-react": "^7.0.0-beta.55",
+    "@babel/core": "^7.0.0-beta.56",
+    "@babel/plugin-proposal-class-properties": "^7.0.0-beta.56",
+    "@babel/preset-env": "^7.0.0-beta.56",
+    "@babel/preset-react": "^7.0.0-beta.56",
     "autoprefixer": "^9.1.0",
     "babel-loader": "^8.0.0-beta.2",
     "clean-webpack-plugin": "^0.1.19",
@@ -39,10 +39,10 @@
     "pug": "^2.0.3",
     "pug-loader": "^2.4.0",
     "sass-loader": "^7.1.0",
-    "style-loader": "^0.21.0",
+    "style-loader": "^0.22.1",
     "uglifyjs-webpack-plugin": "^1.2.7",
     "url-loader": "^1.0.1",
-    "webpack": "^4.16.4",
+    "webpack": "^4.16.5",
     "webpack-cli": "^3.1.0",
     "webpack-dev-server": "^3.1.5",
     "worker-loader": "^2.0.0"
