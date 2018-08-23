@@ -1,9 +1,13 @@
 module.exports = require('../index')({
   react: true,
-  entry: {
-    main: './__test__/src/index.js',
-  },
   pages: [{
-    title: 'Test!',
+    title: 'Test Page',
+    meta: {
+      'theme-color': '#3367D6'
+    },
+    manifest: {
+      background_color: '#FF0000',
+    },
+    headElements: [{ tag: 'script', src: 'not_found.js' }],
   }],
 });
