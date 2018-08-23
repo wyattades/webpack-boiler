@@ -1,40 +1,37 @@
 -
   if (!htmlWebpackPlugin || !htmlWebpackPlugin.options)
-    throw new Error('Must provide config variable: htmlWebpackPlugin');
+    throw new Error('Must use html-webpack-plugin');
 
   const { options, files } = htmlWebpackPlugin;
     
-  options.lang = options.lang || 'en-US';
-
-  options.scripts = options.scripts || [];
-  options.scripts.forEach((item, i) => {
-    if (typeof item === 'string' || item instanceof String) { 
-      options.scripts[i] = { src: item, type: 'application/javascript' };
-    }
+  options.headElements = (options.headElements || []).map((el) => {
+    const tag = el.tag;
+    if (!tag) throw new Error('No tag attribute in headElement');
+    delete el.tag;
+    return { tag, attr: el };
   });
 
-  options.bodyScripts = options.bodyScripts || [];
-  options.bodyScripts.forEach((item, i) => {
-    if (typeof item === 'string' || item instanceof String) { 
-      options.bodyScripts[i] = { src: item, type: 'application/javascript' };
-    }
+  options.bodyElements = (options.bodyElements || []).map((el) => {
+    const tag = el.tag;
+    if (!tag) throw new Error('No tag attribute in bodyElement');
+    delete el.tag;
+    return { tag, attr: el };
   });
 
-  options.links = options.links || [];
-  options.links.forEach((item, i) => {
-    if (typeof item === 'string' || item instanceof String) { 
-      options.links[i] = { href: item, rel: 'stylesheet' };
-    }
-  });
-
-  options.meta = options.meta || [];
-  if (!Array.isArray(options.meta)) {
-    options.meta = [ options.meta ];
+  const mn = options.manifest;
+  if (mn) {
+    if (options.title) mn.name = options.title;
+    if (options.meta && options.meta.description) mn.description = options.meta.description;
+    if (options.meta && options.meta['theme-color']) mn.theme_color = options.meta['theme-color'];
+    if (files.favicon) mn.icons = [{
+      src: files.favicon,
+      sizes: '192x192',
+    }];
   }
 
 doctype html
 
-html(lang=options.lang)
+html(lang=options.lang || 'en-US')
   head
     meta(charset='utf-8')
     meta(content='ie=edge' http-equiv='x-ua-compatible')
@@ -42,8 +39,9 @@ html(lang=options.lang)
     if (options.baseHref)
       base(href=options.baseHref)
 
-    each item in options.meta
-      meta&attributes(item)
+    if (options.meta)
+      each content, name in options.meta
+        meta(content=content name=name)
 
     if options.title
       title= options.title
@@ -55,10 +53,10 @@ html(lang=options.lang)
         = `gtag('config', '${options.googleAnalytics}');`
 
     if (options.manifest)
-      link(href=options.manifest rel='manifest')
+      != `<link rel="manifest" href='data:application/manifest+json,${JSON.stringify(options.manifest)}'/>`
 
     if (files.favicon || options.faviconExternal)
-      link(href=files.favicon || options.faviconExternal rel='shortcut icon')
+      link(href=files.favicon || options.faviconExternal rel='icon' sizes='192x192' type='image/png')
 
     if (options.cache === false)
       meta(http-equiv='Cache-Control' content='no-cache, no-store, must-revalidate')
@@ -71,11 +69,8 @@ html(lang=options.lang)
     each val, key in files.css
       link(href=val rel='stylesheet')
 
-    each item in options.links
-      link&attributes(item)
-
-    each item in options.scripts
-      script&attributes(item)
+    each item in options.headElements
+      #{item.tag}&attributes(item.attr)
 
   body
 
@@ -90,10 +85,9 @@ html(lang=options.lang)
       script(type='text/javascript')
         each key in options.window
           != `window.${key} = '${options.window[key]}';`
-        
-
-    each item in options.bodyScripts
-      script&attributes(item)
 
     each key in Object.keys(files.chunks)
       script(src=files.chunks[key].entry type='text/javascript')
+
+    each el in options.bodyElements
+      #{el.tag}&attributes(el.attr)

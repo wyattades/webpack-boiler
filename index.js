@@ -37,12 +37,12 @@ PATHS.entry = path.resolve(PATHS.src, 'index.js');
  * @param {Object[]} [config.pages=[{}]] - Array of html-webpack-plugin config objects
  * @param {string} [config.pages[].title] - Title of page
  * @param {string} [config.pages[].filename=index.html] - Output filename
- * @param {string[]} [config.pages[].chunks=[]] - Webpack chunks to include e.g. `['main','vendor']`
+ * @param {Object} [config.pages[].meta={}] - Output filename
+ * @param {string[]} [config.pages[].chunks=['index']] - Webpack chunks to include e.g. `['main','vendor']`
  * @param {string} [config.pages[].favicon] - Path to favicon
- * @param {Object[]} [config.pages[].scripts=[]] - Array of `script` element attributes appended to `head` e.g. `[{ src: 'script.js' }]`
- * @param {Object[]} [config.pages[].bodyScripts=[]] - Same as `.scripts` but appended to `body`
- * @param {Object[]} [config.pages[].links=[]] - Same as `.scripts` but for `link` element
- * @param {Object[]} [config.pages[].meta=[]] - Same as `.scripts` but for `meta` element
+ * @param {Object[]} [config.pages[].headElements=[]] - Append extra elements to <head> with an array of element attributes, where tag is the element's tag e.g. `[{ tag: 'link', rel: 'stylesheet', href: 'style.css' }]`
+ * @param {Object[]} [config.pages[].bodyElements=[]] - Append extra elements to <body> with an array of element attributes, where tag is the element's tag e.g. `[{ tag: 'script', src: 'myScript.js' }]`
+ * @param {Object} [config.pages[].manifest=null] - Web App manifest config (if object, then autofills description, name, icons, and lang)
  * @param {string} [config.pages[].lang=en-US] - HTML language
  * @param {string} [config.pages[].appMountId=root] - React root element ID. Only enabled if `react=true`
  * @param {boolean} [config.pages[].cache=true] - Set to false to disable page caching
@@ -67,10 +67,7 @@ module.exports = (config) => {
 
   if (!Array.isArray(pages)) pages = [pages];
 
-  entry = {
-    index: PATHS.entry,
-    ...entry,
-  };
+  if (!entry.index) entry.index = PATHS.entry;
 
   const definedEnvs = {
     DEV,
@@ -115,7 +112,7 @@ module.exports = (config) => {
           }],
           include: PATHS.src,
         }, {
-          test: /\.pug$/,
+          test: /\.(pug|jade)$/,
           loader: 'pug-loader',
         }, {
           test: /\.s?css$/,
@@ -131,6 +128,7 @@ module.exports = (config) => {
               loader: 'postcss-loader',
               options: {
                 ident: 'postcss',
+                // TODO: use webpack's browserlist?
                 plugins: () => [ autoprefixer() ],
               },
             },
@@ -149,7 +147,7 @@ module.exports = (config) => {
         }, {
           loader: 'file-loader',
           options: {
-            name: '[name].[ext]',
+            name: '[path][name].[ext]',
           },
           include: PATHS.static,
         },
@@ -169,30 +167,31 @@ module.exports = (config) => {
       allChunks: true,
     }),
 
-    ...pages.map((page) => new HtmlWebpackPlugin({
+    ...pages.map((page) => {
 
-      ...(!DEV ? {
-        minify: {
-          collapseWhitespace: true,
-          preserveLineBreaks: true,
-          minifyJS: true,
-        },
-        googleAnalytics,
-      } : {}),
+      if (!DEV)
+        Object.assign(page, {
+          minify: {
+            collapseWhitespace: true,
+            preserveLineBreaks: true,
+            minifyJS: true,
+          },
+          googleAnalytics,
+        });
 
-      appMountId: react ? 'root' : null,
+      page.appMountId = page.appMountId || (react ? 'root' : null);
 
-      ...page,
+      page.inject = false;
+      page.template = page.template ? path.resolve(PATHS.callerDirname, page.template) : PATHS.template;
 
-      inject: false, // required
-      template: page.template ? path.resolve(PATHS.callerDirname, page.template) : PATHS.template, // required
-    })),
+      return new HtmlWebpackPlugin(page);
+    }),
     
   ];
 
   if (!DEV) { // PRODUCTION CONFIG
 
-    return {
+    return Object.assign({
       
       entry,
 
@@ -220,12 +219,11 @@ module.exports = (config) => {
         
       ],
 
-      ...baseConfig,
-    };
+    }, baseConfig);
 
   } else { // DEVELOPMENT CONFIG
 
-    return {
+    return Object.assign({
 
       devtool: 'eval-source-map',
 
@@ -252,8 +250,7 @@ module.exports = (config) => {
         new webpack.HotModuleReplacementPlugin(),
       ],
       
-      ...baseConfig,
-    };
+    }, baseConfig);
 
   }
 };
