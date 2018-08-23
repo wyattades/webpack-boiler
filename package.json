@@ -1,6 +1,6 @@
 {
   "name": "webpack-boiler",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "scripts": {
     "test-dev": "NODE_ENV=development webpack-dev-server --config __test__/webpack.config.js",
     "test": "cd __test__ && NODE_ENV=production webpack"
