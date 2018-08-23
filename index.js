@@ -97,19 +97,17 @@ module.exports = (config) => {
           loader: 'worker-loader',
         }, {
           test: /\.js$/,
-          use: [{
-            loader: 'babel-loader',
-            options: {
-              presets: [
-                ...react ? ['@babel/react'] : [],
-                '@babel/env'
-              ],
-              plugins: [
-                ...react ? ['react-hot-loader/babel'] : [],
-                '@babel/plugin-proposal-class-properties'
-              ],
-            },
-          }],
+          loader: 'babel-loader',
+          options: {
+            presets: [
+              ...react ? ['@babel/react'] : [],
+              ['@babel/env', { modules: false }]
+            ],
+            plugins: [
+              ...react ? ['react-hot-loader/babel'] : [],
+              '@babel/plugin-proposal-class-properties'
+            ],
+          },
           include: PATHS.src,
         }, {
           test: /\.(pug|jade)$/,
@@ -118,36 +116,30 @@ module.exports = (config) => {
           test: /\.s?css$/,
           use: [
             DEV ? 'style-loader' : MiniCssExtractPlugin.loader,
-            {
-              loader: 'css-loader',
-              options: {
-                autoprefixer: false,
-              },
-            },
+            'css-loader',
             {
               loader: 'postcss-loader',
               options: {
                 ident: 'postcss',
-                // TODO: use webpack's browserlist?
+                // TODO: necessary? use webpack's browserlist?
                 plugins: () => [ autoprefixer() ],
               },
             },
             'sass-loader',
           ],
-          include: PATHS.css,
+          include: PATHS.src,
         }, {
           test: /\.(gif|jpe?g|png|svg|ttf|eot|woff|woff2)(\?\w+=[\d.]+)?$/,
-          use: [ {
-            loader: 'url-loader',
-            options: {
-              limit: 10000,
-              name: 'asset/[name].[ext]',
-            },
-          } ],
+          loader: 'file-loader',
+          options: {
+            name: 'asset/[name].[ext]',
+          },
+          exclude: PATHS.static,
         }, {
           loader: 'file-loader',
           options: {
             name: '[path][name].[ext]',
+            context: PATHS.static,
           },
           include: PATHS.static,
         },
