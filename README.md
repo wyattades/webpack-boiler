@@ -83,9 +83,9 @@ All config parameters are optional
 ## Custom Templates
 Set the relative path to a custom `pug` template in the `template` config parameter. I recommend to structure the custom template like so:
 
-__my_fun_template.pug__
+__example_template.pug__
 ```pug
-// Extend our `pug` template (Path may differ depending on example_file.pug's location)
+// Extend our `pug` template (Path may differ depending on example_template.pug's location)
 extends ./node_modules/webpack-boiler/template.pug
 
 // Put your content in a `block` with the name 'page_content'
