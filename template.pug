@@ -3,6 +3,8 @@
     throw new Error('Must use html-webpack-plugin');
 
   const { options, files } = htmlWebpackPlugin;
+
+  options.lang = options.lang || 'en-US';
     
   options.headElements = (options.headElements || []).map((el) => {
     const tag = el.tag;
@@ -20,10 +22,11 @@
 
   const mn = options.manifest;
   if (mn) {
-    if (options.title) mn.name = options.title;
-    if (options.meta && options.meta.description) mn.description = options.meta.description;
-    if (options.meta && options.meta['theme-color']) mn.theme_color = options.meta['theme-color'];
-    if (files.favicon) mn.icons = [{
+    if (!mn.lang) mn.lang = options.lang;
+    if (!mn.name && options.title) mn.name = options.title;
+    if (!mn.description && options.meta && options.meta.description) mn.description = options.meta.description;
+    if (!mn.theme_color && options.meta && options.meta['theme-color']) mn.theme_color = options.meta['theme-color'];
+    if (!mn.icons && files.favicon) mn.icons = [{
       src: files.favicon,
       sizes: '192x192',
     }];
@@ -31,13 +34,13 @@
 
 doctype html
 
-html(lang=options.lang || 'en-US')
+html(lang=options.lang)
   head
     meta(charset='utf-8')
     meta(content='ie=edge' http-equiv='x-ua-compatible')
 
     if (options.baseHref)
-      base(href=options.baseHref)
+      base(href=options.baseHref)e
 
     if (options.meta)
       each content, name in options.meta
