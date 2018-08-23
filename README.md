@@ -1,5 +1,5 @@
 # Webpack Boiler[plate]
-Webpack configuration boilerplate. Great for easily configuring modern React (or not) PWAs.
+Webpack configuration boilerplate. Great for easily configuring modern React or vanilla PWAs.
 
 [![npm version](https://badge.fury.io/js/webpack-boiler.svg)](https://badge.fury.io/js/webpack-boiler)
 
@@ -20,7 +20,7 @@ This creates a webpack configuration with default entry point: `<project_root>/s
 - Babel (es6, modules, and React)
 - SCSS & [autoprefixer](https://github.com/postcss/autoprefixer)
 - HTML templates (Jade / [Pug](https://pugjs.org))
-- Manifests
+- Web App Manifests
 - Web workers
 - Uglified/minified JS, CSS, & HTML
 - Hot Reloading (For your React code, follow the [react-hot-loader API](https://github.com/gaearon/react-hot-loader#getting-started))
@@ -31,7 +31,7 @@ $ npm i --save-dev webpack-boiler
 ```
 
 ## Usage
-Add the following to your `package.json` scripts:
+Add the following commands to your `package.json` scripts:
 - __Development__ (your project will hot-reload at http://localhost:8080):
 ```bash
 NODE_ENV=development webpack-dev-server
@@ -75,7 +75,7 @@ All config parameters are optional
 | pages[].cache | `boolean` | `true` | Set to false to disable page caching |
 | pages[].mobile | `boolean` | `true` | Set to false to disable mobile viewport |
 | pages[].manifest | `Object` | `null` | Web App [manifest config](https://developer.mozilla.org/en-US/docs/Web/Manifest) (if object, then autofills `description`, `name`, `icons`, and `lang`) |
-| pages[].template | `string` |  | Relative path to [custom template](#custom-templates) |
+| pages[].template | `string` |  | Relative path to [custom pug template](#custom-templates) |
 | pages[].headElements | `Object[]` | `[]` | Append extra elements to `<head>` with an array of element attributes, where `tag` is the element's tag e.g. `[{ tag: 'link', rel: 'stylesheet', href: 'style.css' }]` |
 | pages[].bodyElements | `Object[]` | `[]` | Same as `headElements` but appended to the end of `<body>` |
 

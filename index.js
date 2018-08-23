@@ -28,26 +28,26 @@ PATHS.entry = path.resolve(PATHS.src, 'index.js');
 /**
  * @param {Object} [config]
  * @param {boolean} [config.react=false] - Enable React Babel and react-hot-loader
- * @param {Object} [config.entry={}] - Webpack entry points. Has default entry: `main: 'src/index.js'` (Use absolute paths)
+ * @param {Object} [config.entry={}] - Webpack entry points. Has default entry: `index: '<project_root>/src/index.js'` (Use absolute paths)
  * @param {Object} [config.env={}] - Variables passed to source code in `process.env`
  * @param {string} [config.googleAnalytics] - Google Analytics ID
  * @param {string} [config.basename] - Basename of website. This is helpful for GithubPages websites e.g. `webpack-boiler` for `wyattades.github.io/webpack-boiler`
  * @param {string} [config.url] - Passed to process.env as `URL` (is set to `http://localhost:<devPort>` during development)
  * @param {number} [config.devPort=8080] - Development port number
- * @param {Object[]} [config.pages=[{}]] - Array of html-webpack-plugin config objects
+ * @param {Object[]} [config.pages=[{}]] - Array of html page config objects (defaults to a single `index.html` file) 
  * @param {string} [config.pages[].title] - Title of page
  * @param {string} [config.pages[].filename=index.html] - Output filename
- * @param {Object} [config.pages[].meta={}] - Output filename
- * @param {string[]} [config.pages[].chunks=['index']] - Webpack chunks to include e.g. `['main','vendor']`
+ * @param {Object} [config.pages[].meta={}] - Inject `meta`-tags e.g. `{ description: 'wow!' }`
+ * @param {string[]} [config.pages[].chunks=['index']] - Webpack chunks to include e.g. `['index','vendor']`
  * @param {string} [config.pages[].favicon] - Path to favicon
- * @param {Object[]} [config.pages[].headElements=[]] - Append extra elements to <head> with an array of element attributes, where tag is the element's tag e.g. `[{ tag: 'link', rel: 'stylesheet', href: 'style.css' }]`
- * @param {Object[]} [config.pages[].bodyElements=[]] - Append extra elements to <body> with an array of element attributes, where tag is the element's tag e.g. `[{ tag: 'script', src: 'myScript.js' }]`
- * @param {Object} [config.pages[].manifest=null] - Web App manifest config (if object, then autofills description, name, icons, and lang)
+ * @param {Object[]} [config.pages[].headElements=[]] - Append extra elements to `<head>` with an array of element attributes, where tag is the element's tag e.g. `[{ tag: 'link', rel: 'stylesheet', href: 'style.css' }]`
+ * @param {Object[]} [config.pages[].bodyElements=[]] - Append extra elements to `<body>` with an array of element attributes, where tag is the element's tag e.g. `[{ tag: 'script', src: 'myScript.js' }]`
+ * @param {Object} [config.pages[].manifest=null] - Web App manifest config (if object, then autofills `description`, `name`, `icons`, and `lang`)
  * @param {string} [config.pages[].lang=en-US] - HTML language
  * @param {string} [config.pages[].appMountId=root] - React root element ID. Only enabled if `react=true`
  * @param {boolean} [config.pages[].cache=true] - Set to false to disable page caching
  * @param {boolean} [config.pages[].mobile=true] - Set to false to disable mobile viewport
- * @param {string} [config.pages[].template] - Relative path to custom template
+ * @param {string} [config.pages[].template] - Relative path to custom `pug` template
  * @returns {Object} [webpackConfigObject](https://webpack.js.org/configuration/)
 */
 module.exports = (config) => {
