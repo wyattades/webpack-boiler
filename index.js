@@ -99,13 +99,15 @@ module.exports = (config) => {
           test: /\.js$/,
           loader: 'babel-loader',
           options: {
+            cacheDirectory: true,
             presets: [
               ...react ? ['@babel/react'] : [],
-              ['@babel/env', { modules: false }]
+              ['@babel/env', { modules: false }],
             ],
             plugins: [
               ...react ? ['react-hot-loader/babel'] : [],
-              '@babel/plugin-proposal-class-properties'
+              '@babel/plugin-proposal-class-properties',
+              '@babel/plugin-syntax-dynamic-import',
             ],
           },
           include: PATHS.src,

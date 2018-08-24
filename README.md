@@ -34,11 +34,11 @@ $ npm i --save-dev webpack-boiler
 Add the following commands to your `package.json` scripts:
 - __Development__ (your project will hot-reload at http://localhost:8080):
 ```bash
-NODE_ENV=development webpack-dev-server
+cross-env NODE_ENV=development webpack-dev-server
 ```
 - __Production Build__ (your project will build to the `./dist` directory):
 ```bash
-NODE_ENV=production webpack
+cross-env NODE_ENV=production webpack
 ```
 
 ## API

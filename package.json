@@ -2,8 +2,8 @@
   "name": "webpack-boiler",
   "version": "0.1.8",
   "scripts": {
-    "test-dev": "NODE_ENV=development webpack-dev-server --config __test__/webpack.config.js",
-    "test": "cd __test__ && NODE_ENV=production webpack"
+    "test-dev": "cross-env NODE_ENV=development webpack-dev-server --config __test__/webpack.config.js",
+    "test": "cd __test__ && cross-env NODE_ENV=production webpack"
   },
   "main": "index.js",
   "keywords": [
@@ -25,11 +25,13 @@
   "dependencies": {
     "@babel/core": "^7.0.0-rc.2",
     "@babel/plugin-proposal-class-properties": "^7.0.0-rc.2",
+    "@babel/plugin-syntax-dynamic-import": "^7.0.0-rc.2",
     "@babel/preset-env": "^7.0.0-rc.2",
     "@babel/preset-react": "^7.0.0-rc.2",
     "autoprefixer": "^9.1.3",
     "babel-loader": "^8.0.0-beta.4",
     "clean-webpack-plugin": "^0.1.19",
+    "cross-env": "^5.2.0",
     "css-loader": "^1.0.0",
     "file-loader": "^2.0.0",
     "html-webpack-plugin": "^3.2.0",
