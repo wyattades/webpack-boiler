@@ -14,6 +14,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const autoprefixer = require('autoprefixer');
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 const DEV = process.env.NODE_ENV !== 'production';
 
@@ -200,6 +201,10 @@ module.exports = (config) => {
         new CleanWebpackPlugin([ PATHS.dist ], { allowExternal: true }),
 
         ...sharedPlugins,
+
+        new BundleAnalyzerPlugin({
+          analyzerMode: process.env.BUNDLE_STATS || 'disabled',
+        }),
               
         new webpack.optimize.OccurrenceOrderPlugin(),
 

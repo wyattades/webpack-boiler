@@ -1,8 +1,23 @@
 # Webpack Boiler[plate]
-Webpack configuration boilerplate. Great for easily configuring modern React or vanilla PWAs.
+> Webpack configuration boilerplate. Great for easily configuring React or vanilla Progressive Web Apps.
 
-[![npm version](https://badge.fury.io/js/webpack-boiler.svg)](https://badge.fury.io/js/webpack-boiler)
+[![npm](https://badge.fury.io/js/webpack-boiler.svg)](https://badge.fury.io/js/webpack-boiler)
 
+## Features
+- Babel (es6, modules, and React)
+- SCSS & [autoprefixer](https://github.com/postcss/autoprefixer)
+- HTML templates (Jade / [Pug](https://pugjs.org))
+- Web App Manifests
+- Web workers
+- Uglified/minified JS, CSS, & HTML
+- Hot Reloading (For your React code, follow the [react-hot-loader API](https://github.com/gaearon/react-hot-loader#getting-started))
+
+## Install
+```bash
+$ npm install --save-dev webpack-boiler
+```
+
+## Usage
 In your project root, create the file __webpack.config.js__ containing:
 ```js
 module.exports = require('webpack-boiler')({
@@ -16,29 +31,14 @@ This creates a webpack configuration with default entry point: `<project_root>/s
 
 (NOTE: Only source files in the `src` directory will be read!)
 
-## Features
-- Babel (es6, modules, and React)
-- SCSS & [autoprefixer](https://github.com/postcss/autoprefixer)
-- HTML templates (Jade / [Pug](https://pugjs.org))
-- Web App Manifests
-- Web workers
-- Uglified/minified JS, CSS, & HTML
-- Hot Reloading (For your React code, follow the [react-hot-loader API](https://github.com/gaearon/react-hot-loader#getting-started))
-
-## Install
-```bash
-$ npm i --save-dev webpack-boiler
-```
-
-## Usage
-Add the following commands to your `package.json` scripts:
+Add the following commands to your `package.json`'s scripts:
 - __Development__ (your project will hot-reload at http://localhost:8080):
-```bash
-cross-env NODE_ENV=development webpack-dev-server
+```json
+"dev": "cross-env NODE_ENV=development webpack-dev-server"
 ```
 - __Production Build__ (your project will build to the `./dist` directory):
 ```bash
-cross-env NODE_ENV=production webpack
+"build": "cross-env NODE_ENV=production webpack"
 ```
 
 ## API
