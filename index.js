@@ -96,6 +96,7 @@ module.exports = (config) => {
         {
           test: /\.worker\.js$/,
           loader: 'worker-loader',
+          include: PATHS.src,
         }, {
           test: /\.js$/,
           loader: 'babel-loader',
@@ -139,6 +140,7 @@ module.exports = (config) => {
           },
           exclude: PATHS.static,
         }, {
+          type: 'javascript/auto',
           loader: 'file-loader',
           options: {
             name: '[path][name].[ext]',
