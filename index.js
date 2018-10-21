@@ -32,6 +32,7 @@ PATHS.entry = path.resolve(PATHS.src, 'index.js');
  * @param {Object} [config.entry={}] - Webpack entry points. Has default entry: `index: '<project_root>/src/index.js'` (Use absolute paths)
  * @param {Object} [config.env={}] - Variables passed to source code in `process.env`
  * @param {string} [config.googleAnalytics] - Google Analytics ID
+ * @param {Object} [config.manifest=null] - Web App manifest config (if object, then autofills `description`, `name`, `icons`, and `lang`)
  * @param {string} [config.basename] - Basename of website. This is helpful for GithubPages websites e.g. `webpack-boiler` for `wyattades.github.io/webpack-boiler`
  * @param {string} [config.url] - Passed to process.env as `URL` (is set to `http://localhost:<devPort>` during development)
  * @param {number} [config.devPort=8080] - Development port number
@@ -43,7 +44,6 @@ PATHS.entry = path.resolve(PATHS.src, 'index.js');
  * @param {string} [config.pages[].favicon] - Path to favicon
  * @param {Object[]} [config.pages[].headElements=[]] - Append extra elements to `<head>` with an array of element attributes, where tag is the element's tag e.g. `[{ tag: 'link', rel: 'stylesheet', href: 'style.css' }]`
  * @param {Object[]} [config.pages[].bodyElements=[]] - Append extra elements to `<body>` with an array of element attributes, where tag is the element's tag e.g. `[{ tag: 'script', src: 'myScript.js' }]`
- * @param {Object} [config.pages[].manifest=null] - Web App manifest config (if object, then autofills `description`, `name`, `icons`, and `lang`)
  * @param {string} [config.pages[].lang=en-US] - HTML language
  * @param {string} [config.pages[].appMountId=root] - React root element ID. Only enabled if `react=true`
  * @param {boolean} [config.pages[].cache=true] - Set to false to disable page caching
@@ -56,6 +56,7 @@ module.exports = (config) => {
   let {
     react,
     pages = [{}],
+    manifest,
     env = {},
     googleAnalytics,
     entry = {},
@@ -83,6 +84,30 @@ module.exports = (config) => {
   if (basename)
     basename = '/' + basename.replace(/(^\/)|(\/$)/g, '');
 
+  for (const page of pages) {
+
+    if (!DEV)
+      Object.assign(page, {
+        minify: {
+          collapseWhitespace: true,
+          preserveLineBreaks: true,
+          minifyJS: true,
+        },
+        googleAnalytics,
+      });
+
+    Object.assign(page, {
+      url,
+      manifest,
+    });
+
+    page.appMountId = page.appMountId || (react ? 'root' : null);
+
+    page.inject = false;
+    page.template = page.template ? path.resolve(PATHS.callerDirname, page.template) : PATHS.template;
+    if (page.favicon) page.favicon = path.resolve(PATHS.callerDirname, page.favicon);
+  
+  }
 
   // base Webpack config
   const baseConfig = {
@@ -164,27 +189,36 @@ module.exports = (config) => {
       allChunks: true,
     }),
 
-    ...pages.map((page) => {
+    ...pages.map((page) => new HtmlWebpackPlugin(page)),
 
-      if (!DEV)
-        Object.assign(page, {
-          minify: {
-            collapseWhitespace: true,
-            preserveLineBreaks: true,
-            minifyJS: true,
-          },
-          googleAnalytics,
-        });
-
-      page.appMountId = page.appMountId || (react ? 'root' : null);
-
-      page.inject = false;
-      page.template = page.template ? path.resolve(PATHS.callerDirname, page.template) : PATHS.template;
-
-      return new HtmlWebpackPlugin(page);
-    }),
-    
   ];
+
+  if (manifest && typeof manifest === 'object') {
+
+    const page = pages[0];
+    if (!manifest.lang) manifest.lang = page.lang;
+    if (!manifest.name && page.title) manifest.name = page.title;
+    if (!manifest.description && page.meta && page.meta.description) manifest.description = page.meta.description;
+    if (!manifest.theme_color && page.meta && page.meta['theme-color']) manifest.theme_color = page.meta['theme-color'];
+    if (!manifest.icons && page.favicon) manifest.icons = [{
+      src: '/' + path.basename(page.favicon),
+      sizes: '192x192',
+    }];
+    
+    class WriteManifestPlugin {
+      apply(compiler) {
+        compiler.hooks.emit.tap('WriteManifestPlugin', (compilation) => {        
+          const manifestFile = JSON.stringify(manifest);
+          compilation.assets['manifest.json'] = {
+            source: () => manifestFile,
+            size: () => manifestFile.length,
+          };
+        });
+      }
+    }
+
+    sharedPlugins.push(new WriteManifestPlugin());
+  }
 
   if (!DEV) { // PRODUCTION CONFIG
 

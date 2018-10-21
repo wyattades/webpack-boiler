@@ -64,6 +64,7 @@ All config parameters are optional
 | basename | `string` |  | Basename of website. This is helpful for GithubPages websites e.g. `webpack-boiler` for `wyattades.github.io/webpack-boiler` |
 | url | `string` |  | Passed to `process.env` as `URL` (is set to `http://localhost:<devPort>` during development) |
 | devPort | `number` | `8080` | Development port number |
+| manifest | `Object` | `null` | Web App [manifest config](https://developer.mozilla.org/en-US/docs/Web/Manifest) (if object, then autofills `description`, `name`, `icons`, and `lang`) |
 | pages | `Object[]` | `[{}]` | Array of html page config objects (defaults to a single `index.html` file) |
 | pages[].filename | `string` | `'index.html'` | Output filename |
 | pages[].title | `string` |  | Title of page |
@@ -74,7 +75,6 @@ All config parameters are optional
 | pages[].appMountId | `string` | `'root'` | React root element ID. Only enabled if `react=true` |
 | pages[].cache | `boolean` | `true` | Set to false to disable page caching |
 | pages[].mobile | `boolean` | `true` | Set to false to disable mobile viewport |
-| pages[].manifest | `Object` | `null` | Web App [manifest config](https://developer.mozilla.org/en-US/docs/Web/Manifest) (if object, then autofills `description`, `name`, `icons`, and `lang`) |
 | pages[].template | `string` |  | Relative path to [custom pug template](#custom-templates) |
 | pages[].headElements | `Object[]` | `[]` | Append extra elements to `<head>` with an array of element attributes, where `tag` is the element's tag e.g. `[{ tag: 'link', rel: 'stylesheet', href: 'style.css' }]` |
 | pages[].bodyElements | `Object[]` | `[]` | Same as `headElements` but appended to the end of `<body>` |
