@@ -7,7 +7,7 @@
 - Babel (es6, modules, and React)
 - SCSS & [autoprefixer](https://github.com/postcss/autoprefixer)
 - HTML templates (Jade / [Pug](https://pugjs.org))
-- Web App Manifests
+- Web App Manifest and service worker
 - Web workers
 - Uglified/minified JS, CSS, & HTML
 - Hot Reloading (For your React code, follow the [react-hot-loader API](https://github.com/gaearon/react-hot-loader#getting-started))
@@ -79,6 +79,9 @@ All config parameters are optional
 | pages[].headElements | `Object[]` | `[]` | Append extra elements to `<head>` with an array of element attributes, where `tag` is the element's tag e.g. `[{ tag: 'link', rel: 'stylesheet', href: 'style.css' }]` |
 | pages[].bodyElements | `Object[]` | `[]` | Same as `headElements` but appended to the end of `<body>` |
 
+## Manifest
+To truly create a Progressive Web App, you need to provide an object to the `manifest` config parameter. This will produce a `manifest.json` file as well as a service worker
+(`sw.js`) that caches the files on your website (using [offline-plugin](https://www.npmjs.com/package/offline-plugin)).
 
 ## Custom Templates
 Set the relative path to a custom `pug` template in the `template` config parameter. I recommend to structure the custom template like so:
@@ -104,3 +107,14 @@ import Foo from './Foo.worker.js';
 // or
 import Bar from 'worker-loader!./Bar.js';
 ```
+
+## Default (Opinionated) Behaviors
+- The bundle output directory is `dist`
+- Importing CSS into your source code results in an extracted `.css` file (using [mini-css-extract-plugin](https://github.com/webpack-contrib/mini-css-extract-plugin))
+- CSS and JS bundle filenames are appended with the hash of that file e.g. `index.0435m918429fjsaa832l.js`
+- Files in `<project_root>/src/static` are automatically copied to the bundle output (and retain their folder structure) if you add the following to your source code:
+  ```js
+  require.context('./static', true);
+  ```
+- Images imported in your source code are placed in an `assets` directory in your bundle
+- I suggest providing a `.ico` or `.png` favicon file with size 192x192 (you can include additional sizes in the `.ico` file)
