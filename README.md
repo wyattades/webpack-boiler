@@ -65,6 +65,7 @@ All config parameters are optional
 | url | `string` |  | Passed to `process.env` as `URL` (is set to `http://localhost:<devPort>` during development) |
 | devPort | `number` | `8080` | Development port number |
 | manifest | `Object` | `null` | Web App [manifest config](https://developer.mozilla.org/en-US/docs/Web/Manifest) (if object, then autofills `description`, `name`, `icons`, and `lang`) |
+| offline | `boolean` | `false` | Offline cache your bundle assets. Defaults to `true` if `manifest` is provided. You can also provide an Object for custom [offline-plugin](https://github.com/NekR/offline-plugin/blob/master/docs/options.md) options |
 | pages | `Object[]` | `[{}]` | Array of html page config objects (defaults to a single `index.html` file) |
 | pages[].filename | `string` | `'index.html'` | Output filename |
 | pages[].title | `string` |  | Title of page |

@@ -58,6 +58,7 @@ module.exports = (config) => {
     react,
     pages = [{}],
     manifest,
+    offline,
     env = {},
     googleAnalytics,
     entry = {},
@@ -221,7 +222,17 @@ module.exports = (config) => {
       }
     }
 
-    sharedPlugins.push(new WriteManifestPlugin(), new OfflinePlugin());
+    sharedPlugins.push(new WriteManifestPlugin());
+  }
+
+  if (offline !== false && (offline || (manifest && typeof manifest === 'object'))) {
+    const config = {
+      appShell: basename || '/',
+    };
+    if (typeof offline === 'object' && offline !== null)
+      Object.assign(config, offline);
+    
+    sharedPlugins.push(new OfflinePlugin(config));
   }
 
   if (!DEV) { // PRODUCTION CONFIG
