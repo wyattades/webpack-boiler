@@ -13,6 +13,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
+const OfflinePlugin = require('offline-plugin');
 const autoprefixer = require('autoprefixer');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
@@ -195,6 +196,9 @@ module.exports = (config) => {
 
   if (manifest && typeof manifest === 'object') {
 
+    if (!manifest.start_url)
+      throw 'Must include "start_url" property in manifest e.g. "https://example.com/home"';
+
     const page = pages[0];
     if (!manifest.lang) manifest.lang = page.lang;
     if (!manifest.name && page.title) manifest.name = page.title;
@@ -217,7 +221,7 @@ module.exports = (config) => {
       }
     }
 
-    sharedPlugins.push(new WriteManifestPlugin());
+    sharedPlugins.push(new WriteManifestPlugin(), new OfflinePlugin());
   }
 
   if (!DEV) { // PRODUCTION CONFIG
