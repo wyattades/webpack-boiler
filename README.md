@@ -14,7 +14,7 @@
 
 ## Install
 ```bash
-$ npm install --save-dev webpack-boiler
+npm install --save-dev webpack-boiler
 ```
 
 ## Usage
@@ -31,15 +31,17 @@ This creates a webpack configuration with default entry point: `<project_root>/s
 
 (NOTE: Only source files in the `src` directory will be read!)
 
-Add the following commands to your `package.json`'s scripts:
+To develop and bundle your app, add the following commands to your `package.json`'s scripts:
 - __Development__ (your project will hot-reload at http://localhost:8080):
 ```json
 "dev": "cross-env NODE_ENV=development webpack-dev-server"
 ```
 - __Production Build__ (your project will build to the `./dist` directory):
-```bash
+```json
 "build": "cross-env NODE_ENV=production webpack"
 ```
+
+_You can also view an example app [here](https://github.com/wyattades/personal-site/)._
 
 ## API
 
@@ -119,3 +121,6 @@ import Bar from 'worker-loader!./Bar.js';
   ```
 - Images imported in your source code are placed in an `assets` directory in your bundle
 - I suggest providing a `.ico` or `.png` favicon file with size 192x192 (you can include additional sizes in the `.ico` file)
+
+## DISCLAIMER
+This package is still in development and is constantly changing. Please report discrepencies to [Github issues](https://github.com/wyattades/webpack-boiler/issues).

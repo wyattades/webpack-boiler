@@ -34,6 +34,7 @@ PATHS.entry = path.resolve(PATHS.src, 'index.js');
  * @param {Object} [config.env={}] - Variables passed to source code in `process.env`
  * @param {string} [config.googleAnalytics] - Google Analytics ID
  * @param {Object} [config.manifest=null] - Web App manifest config (if object, then autofills `description`, `name`, `icons`, and `lang`)
+ * @param {boolean} [config.offline=false] - Offline cache your bundle assets. Defaults to `true` if `manifest` is provided. You can also provide an Object for custom [offline-plugin](https://github.com/NekR/offline-plugin/blob/master/docs/options.md) options
  * @param {string} [config.basename] - Basename of website. This is helpful for GithubPages websites e.g. `webpack-boiler` for `wyattades.github.io/webpack-boiler`
  * @param {string} [config.url] - Passed to process.env as `URL` (is set to `http://localhost:<devPort>` during development)
  * @param {number} [config.devPort=8080] - Development port number
