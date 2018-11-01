@@ -8,7 +8,6 @@ if (!(process.env.NODE_ENV in { production: 0, development: 0 }))
 
 const webpack = require('webpack');
 const path = require('path');
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
@@ -130,9 +129,12 @@ module.exports = (config) => {
           loader: 'babel-loader',
           options: {
             cacheDirectory: true,
+            minified: !DEV,
             presets: [
               ...react ? ['@babel/react'] : [],
-              ['@babel/env', { modules: false }],
+              ['@babel/env', {
+                modules: false,
+              }],
             ],
             plugins: [
               ...react ? ['react-hot-loader/babel'] : [],
@@ -260,9 +262,9 @@ module.exports = (config) => {
               
         new webpack.optimize.OccurrenceOrderPlugin(),
 
-        new UglifyJsPlugin({
-          parallel: true,
-        }),
+        // new UglifyJsPlugin({
+        //   parallel: true,
+        // }),
 
         new OptimizeCssAssetsPlugin({
           cssProcessorOptions: { discardComments: { removeAll: true } },
