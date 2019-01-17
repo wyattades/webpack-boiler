@@ -71,6 +71,9 @@ html(lang=options.lang)
     each item in options.headElements
       #{item.tag}&attributes(item.attr)
 
+    each key in Object.keys(files.chunks)
+      script(src=files.chunks[key].entry defer type='text/javascript')
+
   body
 
     block page_content
@@ -86,9 +89,6 @@ html(lang=options.lang)
       script(type='text/javascript')
         each key in options.window
           != `window.${key} = '${options.window[key]}';`
-
-    each key in Object.keys(files.chunks)
-      script(src=files.chunks[key].entry type='text/javascript')
 
     each el in options.bodyElements
       #{el.tag}&attributes(el.attr)
