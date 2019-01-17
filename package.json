@@ -3,7 +3,7 @@
   "version": "0.3.0",
   "scripts": {
     "test-dev": "cross-env NODE_ENV=development webpack-dev-server --config test/webpack.config.js",
-    "test": "cd test && cross-env NODE_ENV=production webpack"
+    "test": "cd test && cross-env NODE_ENV=production webpack && http-server myBuildDirectory"
   },
   "main": "index.js",
   "keywords": [
@@ -56,6 +56,7 @@
     "worker-loader": "^2.0.0"
   },
   "devDependencies": {
+    "http-server": "^0.11.1",
     "react": "^16.7.0",
     "react-dom": "^16.7.0",
     "react-hot-loader": "^4.6.3"
