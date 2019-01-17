@@ -60,7 +60,7 @@ All config parameters are optional
 | Name | Type | Default | Description |
 | --- | --- | --- | --- |
 | react | `boolean` | `false` | Enable React Babel and react-hot-loader |
-| entry | `Object` | `{}` | Webpack entry points. Has default entry: `index: '<project_root>/src/index.js'` (Must use absolute paths) |
+| entry | `Object` | `{}` | Webpack entry points. Has default entry: `index: '<project_root>/src/index.js'` |
 | env | `Object` | `{}` | Variables passed to source code in `process.env` |
 | googleAnalytics | `string` |  | Google Analytics ID |
 | basename | `string` |  | Basename of website. This is helpful for GithubPages websites e.g. `webpack-boiler` for `wyattades.github.io/webpack-boiler` |

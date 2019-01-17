@@ -20,11 +20,14 @@ const DEV = process.env.NODE_ENV !== 'production';
 
 const PATHS = {};
 PATHS.callerDirname = path.dirname(module.parent.filename);
-PATHS.dist = path.resolve(PATHS.callerDirname, 'dist');
-PATHS.src = path.resolve(PATHS.callerDirname, 'src');
+
+const callerPath = (relPath) => path.resolve(PATHS.callerDirname, relPath);
+
+PATHS.src = callerPath('src');
 PATHS.template = path.resolve(__dirname, 'template.pug');
 PATHS.static = path.resolve(PATHS.src, 'static');
 PATHS.entry = path.resolve(PATHS.src, 'index.js');
+
 
 /**
  * @param {Object} [config]
@@ -65,11 +68,23 @@ module.exports = (config) => {
     basename = '',
     url = '',
     devPort = 8080,
+    output = 'dist',
   } = config || {};
 
   // Reformat arguments:
 
-  if (!Array.isArray(pages)) pages = [pages];
+  output = callerPath(output);
+
+  if (!Array.isArray(pages)) {
+    if (typeof pages === 'object') pages = [pages];
+    else throw 'Config option "pages" must be an object or array';
+  }
+
+  if (typeof entry !== 'object') throw 'Config option "entry" must be an object';
+
+  for (const key in entry) {
+    entry[key] = callerPath(entry[key]);
+  }
 
   if (!entry.index) entry.index = PATHS.entry;
 
@@ -106,8 +121,8 @@ module.exports = (config) => {
     page.appMountId = page.appMountId || (react ? 'root' : null);
 
     page.inject = false;
-    page.template = page.template ? path.resolve(PATHS.callerDirname, page.template) : PATHS.template;
-    if (page.favicon) page.favicon = path.resolve(PATHS.callerDirname, page.favicon);
+    page.template = page.template ? callerPath(page.template) : PATHS.template;
+    if (page.favicon) page.favicon = callerPath(page.favicon);
   
   }
 
@@ -229,13 +244,13 @@ module.exports = (config) => {
   }
 
   if (offline !== false && (offline || (manifest && typeof manifest === 'object'))) {
-    const config = {
+    const offlineConfig = {
       appShell: basename || '/',
     };
     if (typeof offline === 'object' && offline !== null)
-      Object.assign(config, offline);
+      Object.assign(offlineConfig, offline);
     
-    sharedPlugins.push(new OfflinePlugin(config));
+    sharedPlugins.push(new OfflinePlugin(offlineConfig));
   }
 
   if (!DEV) { // PRODUCTION CONFIG
@@ -245,14 +260,14 @@ module.exports = (config) => {
       entry,
 
       output: {
-        path: PATHS.dist,
+        path: output,
         publicPath: `${basename}/`,
         filename: '[name].[chunkhash].js',
       },
 
       plugins: [
 
-        new CleanWebpackPlugin([ PATHS.dist ], { allowExternal: true }),
+        new CleanWebpackPlugin([ output ], { allowExternal: true }),
 
         ...sharedPlugins,
 
