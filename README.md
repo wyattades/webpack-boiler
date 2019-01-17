@@ -41,11 +41,11 @@ To develop and bundle your app, add the following commands to your `package.json
 "build": "cross-env NODE_ENV=production webpack"
 ```
 
-_You can also view an example app [here](https://github.com/wyattades/personal-site/)._
+_You can also view a simple example [here](/test), or a production-ready app [here](https://github.com/wyattades/personal-site/)._
 
 ## API
 
-### `webpackBoiler(config?)`
+### `webpackBoiler([config])`
 
 **Returns**: `Object` - [webpackConfigObject](https://webpack.js.org/configuration/)  
 
@@ -60,7 +60,8 @@ All config parameters are optional
 | Name | Type | Default | Description |
 | --- | --- | --- | --- |
 | react | `boolean` | `false` | Enable React Babel and react-hot-loader |
-| entry | `Object` | `{}` | Webpack entry points. Has default entry: `index: '<project_root>/src/index.js'` |
+| entry | `Object` | `{}` | Webpack entry points. Adds property `index: '<project_root>/src/index.js'` if you don't provide any entries |
+| output | `string` | `dist` | Build directory |
 | env | `Object` | `{}` | Variables passed to source code in `process.env` |
 | googleAnalytics | `string` |  | Google Analytics ID |
 | basename | `string` |  | Basename of website. This is helpful for GithubPages websites e.g. `webpack-boiler` for `wyattades.github.io/webpack-boiler` |
@@ -112,7 +113,7 @@ import Bar from 'worker-loader!./Bar.js';
 ```
 
 ## Default (Opinionated) Behaviors
-- The bundle output directory is `dist`
+- Source files must be in a directory named `src`
 - Importing CSS into your source code results in an extracted `.css` file (using [mini-css-extract-plugin](https://github.com/webpack-contrib/mini-css-extract-plugin))
 - CSS and JS bundle filenames are appended with the hash of that file e.g. `index.0435m918429fjsaa832l.js`
 - Files in `<project_root>/src/static` are automatically copied to the bundle output (and retain their folder structure) if you add the following to your source code:

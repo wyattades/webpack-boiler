@@ -82,11 +82,13 @@ module.exports = (config) => {
 
   if (typeof entry !== 'object') throw 'Config option "entry" must be an object';
 
+  let noEntries = true;
   for (const key in entry) {
+    noEntries = false;
     entry[key] = callerPath(entry[key]);
   }
 
-  if (!entry.index) entry.index = PATHS.entry;
+  if (noEntries) entry.index = PATHS.entry;
 
   const definedEnvs = {
     DEV,
