@@ -4,6 +4,11 @@ module.exports = require('../index')({
     start_url: 'https://localhost:8080',
     background_color: '#FF0000',
   },
+  entry: {
+    foo: './src/customEntryPoint.js',
+    bar: './src/anotherEntryPoint.js',
+  },
+  output: 'myBuildDirectory',
   pages: [{
     title: 'Test Page',
     meta: {
