@@ -17,6 +17,10 @@
     "jade",
     "pwa"
   ],
+  "files": [
+    "index.js",
+    "template.pug"
+  ],
   "description": "Babel, React, and HTML webpack config",
   "license": "MIT",
   "repository": {
