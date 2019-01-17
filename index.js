@@ -6,6 +6,8 @@
 if (!(process.env.NODE_ENV in { production: 0, development: 0 }))
   throw new Error('Please set NODE_ENV environment variable to "production" or "development"');
 
+const warn = (...msg) => console.log('\x1b[1m\x1b[33mwebpack-boiler:\x1b[0m', ...msg);
+
 const webpack = require('webpack');
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
@@ -82,6 +84,8 @@ module.exports = (config) => {
 
   if (typeof entry !== 'object') throw 'Config option "entry" must be an object';
 
+  if (DEV) url = `http://localhost:${devPort}`;
+
   let noEntries = true;
   for (const key in entry) {
     noEntries = false;
@@ -94,7 +98,7 @@ module.exports = (config) => {
     DEV,
     NODE_ENV: JSON.stringify(process.env.NODE_ENV),
     BASENAME: JSON.stringify(basename),
-    URL: JSON.stringify(!DEV ? url : `http://localhost:${devPort}`),
+    URL: JSON.stringify(url),
   };
   for (const key in env) {
     definedEnvs[key] = JSON.stringify(env[key]);
@@ -119,6 +123,8 @@ module.exports = (config) => {
       url,
       manifest,
     });
+
+    page.lang = page.lang || 'en-US';
 
     page.appMountId = page.appMountId || (react ? 'root' : null);
 
@@ -216,12 +222,9 @@ module.exports = (config) => {
   ];
 
   if (manifest && typeof manifest === 'object') {
-
-    if (!manifest.start_url)
-      throw 'Must include "start_url" property in manifest e.g. "https://example.com/home"';
-
-    const page = pages[0];
-    if (!manifest.lang) manifest.lang = page.lang;
+    
+    const page = pages[0] || {};
+    if (!manifest.lang && page.lang) manifest.lang = page.lang;
     if (!manifest.name && page.title) manifest.name = page.title;
     if (!manifest.description && page.meta && page.meta.description) manifest.description = page.meta.description;
     if (!manifest.theme_color && page.meta && page.meta['theme-color']) manifest.theme_color = page.meta['theme-color'];
@@ -229,7 +232,12 @@ module.exports = (config) => {
       src: '/' + path.basename(page.favicon),
       sizes: '192x192',
     }];
-    
+    if (!manifest.start_url && url) manifest.start_url = url;
+
+    const missing = ['lang','name','description','theme_color','icons','start_url'].filter((key) => !manifest[key]);
+    if (missing.length)
+      warn('PWA guidelines suggest that you add the following properties to your manifest file: ' + missing + '\n');
+
     class WriteManifestPlugin {
       apply(compiler) {
         compiler.hooks.emit.tap('WriteManifestPlugin', (compilation) => {        
