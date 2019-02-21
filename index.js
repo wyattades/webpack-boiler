@@ -79,10 +79,10 @@ module.exports = (config) => {
 
   if (!Array.isArray(pages)) {
     if (typeof pages === 'object') pages = [pages];
-    else throw 'Config option "pages" must be an object or array';
+    else throw new Error('Config option "pages" must be an object or array');
   }
 
-  if (typeof entry !== 'object') throw 'Config option "entry" must be an object';
+  if (typeof entry !== 'object') throw new Error('Config option "entry" must be an object');
 
   if (DEV) url = `http://localhost:${devPort}`;
 
@@ -163,6 +163,7 @@ module.exports = (config) => {
               ...react ? ['react-hot-loader/babel'] : [],
               '@babel/plugin-proposal-class-properties',
               '@babel/plugin-syntax-dynamic-import',
+              '@babel/plugin-transform-async-to-generator',
             ],
           },
           include: PATHS.src,
