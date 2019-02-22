@@ -161,7 +161,7 @@ module.exports = (config) => {
             ],
             plugins: [
               ...react ? ['react-hot-loader/babel'] : [],
-              '@babel/plugin-proposal-class-properties',
+              ['@babel/plugin-proposal-class-properties', { loose: true }],
               '@babel/plugin-syntax-dynamic-import',
               '@babel/plugin-transform-async-to-generator',
             ],
