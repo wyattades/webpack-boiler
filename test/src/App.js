@@ -12,11 +12,16 @@ class App extends React.Component {
     dynamic: null,
   }
 
-  componentDidMount() {
-    import('./dynamic')
+  async componentDidMount() {
+
+    await import('./dynamic')
     .then((dynamic) => {
       this.setState({ dynamic: dynamic.default() });
     });
+
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+
+    console.log('Async works!');
   }
 
   render () {

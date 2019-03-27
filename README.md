@@ -15,6 +15,8 @@
 ## Install
 ```bash
 npm install --save-dev webpack-boiler
+# If you want to use React:
+npm install --save react react-dom react-hot-loader
 ```
 
 ## Usage
@@ -59,7 +61,7 @@ All config parameters are optional
 
 | Name | Type | Default | Description |
 | --- | --- | --- | --- |
-| react | `boolean` | `false` | Enable React Babel and react-hot-loader |
+| react | `boolean` | `false` | Enable React parsing with Babel (must install `react-hot-loader`) |
 | entry | `Object` | `{}` | Webpack entry points. Adds property `index: '<project_root>/src/index.js'` if you don't provide any entries |
 | output | `string` | `dist` | Build directory |
 | env | `Object` | `{}` | Variables passed to source code in `process.env` |
