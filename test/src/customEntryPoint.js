@@ -20,7 +20,7 @@ require.context('./static', true);
 const testWorker = new TestWorker();
 testWorker.postMessage('cow');
 testWorker.onmessage = (event) => {
-  console.log('Parent received:', event.data);
+  console.log('Parent received: ' + JSON.stringify(event.data));
 };
 
 // React syntax (jsx) is supported
