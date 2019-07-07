@@ -1,6 +1,6 @@
 {
   "name": "webpack-boiler",
-  "version": "0.3.5",
+  "version": "0.3.6",
   "scripts": {
     "test": "cd test && NODE_ENV=production webpack && cd .. && NODE_ENV=production jest --testPathIgnorePatterns test/development.test.js && NODE_ENV=development jest --testPathIgnorePatterns test/production.test.js"
   },
