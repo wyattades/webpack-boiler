@@ -177,7 +177,6 @@ module.exports = (config) => {
           loader: 'babel-loader',
           options: {
             cacheDirectory: true,
-            minified: !DEV,
             presets: [
               ...(react ? ['@babel/react'] : []),
               [
