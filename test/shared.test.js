@@ -19,18 +19,24 @@ describe('Head content', () => {
 
     for (const name in meta)
       await expect(page).toMatchElement(
-        `meta[name="${name}"][content="${meta[name]}"]`,
+        `head meta[name="${name}"][content="${meta[name]}"]`,
       );
   });
 });
 
 describe('Page Content', () => {
+  // it('has javascript enabled', async () => {
+  //   await expect(page).not.toMatch(
+  //     'JavaScript must be enabled to run this page properly',
+  //   );
+  // });
+
   it('has dynamic text', async () => {
     await expect(page).toMatch('PAGE_URL=http://localhost:3033');
     await expect(page).toMatch('STATIC_PROP=foo');
     await expect(page).toMatch('THIS_PROP=bar');
     await expect(page).toMatch('DYNAMIC=Cats');
-    await expect(page).toMatch('DYNAMIC=Cats');
+    await expect(page).toMatch(`NODE_ENV=${process.env.NODE_ENV}`);
   });
 
   it('has correct console output', async () => {

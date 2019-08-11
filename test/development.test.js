@@ -1,4 +1,5 @@
 const fs = require('fs');
+const waitForExpect = require('wait-for-expect');
 
 const replacements = [
   {
@@ -14,36 +15,44 @@ const replacements = [
 ];
 
 describe('Changing source files hot-reloads', () => {
+  let original;
+  const filePath = __dirname + '/src/App.js';
+  const backupPath = __dirname + '/src/_App.js';
+
   beforeAll(async () => {
+    if (fs.existsSync(backupPath)) {
+      if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+      fs.copyFileSync(backupPath, filePath);
+    } else {
+      fs.copyFileSync(filePath, backupPath);
+    }
+
+    original = fs.readFileSync(filePath, 'utf8');
+
     await page.goto('http://localhost:3033');
   });
 
-  it('Page has text that will be replaced', async () => {
-    for (const { selector, oldText } in replacements)
-      await expect(page).toMatchElement(selector, oldText);
+  afterAll(() => {
+    fs.unlinkSync(filePath);
+    fs.renameSync(backupPath, filePath);
   });
 
-  it('Change text in App.js to show up on page live', async () => {
-    const filePath = __dirname + '/src/App.js';
+  test.each(replacements)(
+    'replaces "$oldText" with "$newText" at selector "$selector"',
+    async ({ oldText, newText, selector }) => {
+      await waitForExpect(() =>
+        expect(page).toMatchElement(selector, { text: oldText }),
+      );
 
-    const original = fs.readFileSync(filePath, 'utf8');
+      fs.writeFileSync(filePath, original.replace(oldText, newText), 'utf8');
 
-    let updated = original;
-    for (const { oldText, newText } of replacements)
-      updated = original.replace(oldText, newText);
-
-    fs.writeFileSync(filePath, updated, 'utf8');
-
-    let err;
-    try {
-      await page.waitFor(2000);
-
-      for (const { selector, newText } in replacements)
-        await expect(page).toMatchElement(selector, newText);
-    } catch (e) {
-      err = e;
-    }
-    fs.writeFileSync(filePath, original, 'utf8');
-    if (err) throw err;
-  });
+      // I thought toMatchElement already retries for 30 seconds :/
+      await waitForExpect(() =>
+        expect(page).toMatchElement(selector, {
+          text: newText,
+        }),
+      );
+    },
+    10000,
+  );
 });

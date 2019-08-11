@@ -1,18 +1,15 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { hot } from 'react-hot-loader/root';
 
 const Hooked = () => {
-  const [text, setText] = React.useState('');
+  const [text, setText] = useState('');
 
   useEffect(() => {
     // The following line is changed by the test suite:
     const prefix = 'Code that changes';
-    let i = 0;
-    const intervalId = setInterval(
-      () => setText(`${prefix}: interval #${i++}`),
-      250,
-    );
-    return () => clearInterval(intervalId);
+
+    const timeoutId = setTimeout(() => setText(prefix), 500);
+    return () => clearTimeout(timeoutId);
   }, []);
 
   return <p id="hot_reload_2">{text}</p>;

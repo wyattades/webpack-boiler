@@ -6,7 +6,7 @@ module.exports = {
         : 'webpack-dev-server --port 3033',
     port: 3033,
     options: {
-      cwd: './test'
-    }
+      cwd: './test',
+    },
   },
 };
