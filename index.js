@@ -30,7 +30,7 @@ const callerPath = (relPath) => path.resolve(PATHS.callerDirname, relPath);
 PATHS.src = callerPath('src');
 PATHS.template = path.resolve(__dirname, 'template.pug');
 PATHS.static = path.resolve(PATHS.src, 'static');
-PATHS.entry = path.resolve(PATHS.src, 'index.js');
+PATHS.entry = path.resolve(PATHS.src, 'index');
 
 /**
  * @param {Object} [config]
@@ -56,7 +56,7 @@ PATHS.entry = path.resolve(PATHS.src, 'index.js');
  * @param {boolean} [config.pages[].cache=true] - Set to false to disable page caching
  * @param {boolean} [config.pages[].mobile=true] - Set to false to disable mobile viewport
  * @param {string} [config.pages[].template] - Relative path to custom `pug` template
- * @returns {Object} [webpackConfigObject](https://webpack.js.org/configuration/)
+ * @returns {webpack.Configuration}
  */
 module.exports = (config) => {
   let {
@@ -162,6 +162,7 @@ module.exports = (config) => {
             'react-dom': '@hot-loader/react-dom',
           }
         : {},
+      extensions: ['.js', '.jsx'],
     },
 
     module: {
@@ -201,7 +202,7 @@ module.exports = (config) => {
           loader: 'pug-loader',
         },
         {
-          test: /\.s?css$/,
+          test: /\.(s?css|sass)$/,
           use: [
             DEV ? 'style-loader' : MiniCssExtractPlugin.loader,
             'css-loader',

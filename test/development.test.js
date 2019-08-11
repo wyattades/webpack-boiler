@@ -16,8 +16,8 @@ const replacements = [
 
 describe('Changing source files hot-reloads', () => {
   let original;
-  const filePath = __dirname + '/src/App.js';
-  const backupPath = __dirname + '/src/_App.js';
+  const filePath = __dirname + '/src/App.jsx';
+  const backupPath = __dirname + '/src/_App.jsx';
 
   beforeAll(async () => {
     if (fs.existsSync(backupPath)) {

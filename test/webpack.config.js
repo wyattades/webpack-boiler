@@ -4,8 +4,8 @@ module.exports = require('../index')({
     background_color: '#FF0000',
   },
   entry: {
-    foo: './src/customEntryPoint.js',
-    bar: './src/anotherEntryPoint.js',
+    foo: './src/customEntryPoint',
+    bar: './src/anotherEntryPoint',
   },
   output: 'myBuildDirectory',
   devPort: 8000,
