@@ -20,7 +20,7 @@ const OfflinePlugin = require('offline-plugin');
 const autoprefixer = require('autoprefixer');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 
-const DEV = process.env.NODE_ENV !== 'production';
+const DEV = process.env.NODE_ENV === 'development';
 
 const PATHS = {};
 PATHS.callerDirname = path.dirname(module.parent.filename);
@@ -135,16 +135,18 @@ module.exports = (config) => {
   let includeReactHotLoader = false;
   if (react) {
     try {
-      require.resolve('react-hot-loader');
-      hasReactHotLoader = true;
+      require.resolve('react-hot-loader', { paths: [PATHS.callerDirname] });
+      includeReactHotLoader = true;
     } catch (_) {}
   }
 
   let includeReactHotLoaderDomPatch = false;
   if (includeReactHotLoader && DEV) {
     try {
-      require.resolve('@hot-loader/react-dom');
-      hasReactHotLoaderDomPatch = true;
+      require.resolve('@hot-loader/react-dom', {
+        paths: [PATHS.callerDirname],
+      });
+      includeReactHotLoaderDomPatch = true;
     } catch (_) {}
   }
 
