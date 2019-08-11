@@ -1,22 +1,36 @@
 const waitForExpect = require('wait-for-expect');
 
+let consoleOut = [];
+
+beforeAll(async () => {
+  consoleOut = [];
+
+  page.on('console', (e) => consoleOut.push(e.text()));
+
+  await page.goto('http://localhost:3033');
+});
+
+describe('Head content', () => {
+  it('has meta tags', async () => {
+    const meta = {
+      'theme-color': '#3367D6',
+      description: 'This is a great website',
+    };
+
+    for (const name in meta)
+      await expect(page).toMatchElement(
+        `meta[name="${name}"][content="${meta[name]}"]`,
+      );
+  });
+});
+
 describe('Page Content', () => {
-  const consoleOut = [];
-
-  beforeAll(async () => {
-    page.on('console', (e) => consoleOut.push(e.text()));
-
-    await page.goto('http://localhost:3033');
-  });
-
-  it('has static text', async () => {
-    await expect(page).toMatch('Test on page: http://localhost:3033');
-  });
-
   it('has dynamic text', async () => {
-    await expect(page).toMatch('foo');
-    await expect(page).toMatch('bar');
-    await expect(page).toMatch('Cats');
+    await expect(page).toMatch('PAGE_URL=http://localhost:3033');
+    await expect(page).toMatch('STATIC_PROP=foo');
+    await expect(page).toMatch('THIS_PROP=bar');
+    await expect(page).toMatch('DYNAMIC=Cats');
+    await expect(page).toMatch('DYNAMIC=Cats');
   });
 
   it('has correct console output', async () => {

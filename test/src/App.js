@@ -1,6 +1,23 @@
 import React from 'react';
 import { hot } from 'react-hot-loader/root';
 
+const Hooked = () => {
+  const [text, setText] = React.useState('');
+
+  useEffect(() => {
+    // The following line is changed by the test suite:
+    const prefix = 'Code that changes';
+    let i = 0;
+    const intervalId = setInterval(
+      () => setText(`${prefix}: interval #${i++}`),
+      250,
+    );
+    return () => clearInterval(intervalId);
+  }, []);
+
+  return <p id="hot_reload_2">{text}</p>;
+};
+
 class App extends React.Component {
   static staticProp = 'foo';
 
@@ -24,13 +41,20 @@ class App extends React.Component {
     const { dynamic } = this.state;
 
     return (
-      <div>
-        <h1>Test on page: {window.location.href}</h1>
-        <p id="hot_reload_test">Here is some text!</p>
-        <p>{this.myProp}</p>
-        <p>{App.staticProp}</p>
-        <p>{dynamic}</p>
-      </div>
+      <>
+        <ul>
+          <li>PAGE_URL={window.location.href}</li>
+          <li>THIS_PROP={this.myProp}</li>
+          <li>STATIC_PROP={App.staticProp}</li>
+          <li>DYNAMIC={dynamic}</li>
+          <li>NODE_ENV={process.env.NODE_ENV}</li>
+        </ul>
+        <hr />
+        {/* The following line is changed by the test suite: */}
+        <p id="hot_reload_1">Here is some text!</p>
+        <hr />
+        <Hooked />
+      </>
     );
   }
 }

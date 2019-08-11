@@ -1,3 +1,4 @@
+import 'react-hot-loader';
 import React from 'react';
 import { render } from 'react-dom';
 import * as Offline from 'offline-plugin/runtime';
@@ -8,10 +9,8 @@ import './style.scss';
 import App from './App';
 import TestWorker from './test.worker.js';
 
-
 // Enable offline plugin: uses a service worker to cache resources
-if (process.env.NODE_ENV === 'production')
-  Offline.install();
+if (process.env.NODE_ENV === 'production') Offline.install();
 
 // Copy all files from the `static` to `dist`, retaining their folder structure
 require.context('./static', true);
@@ -24,4 +23,4 @@ testWorker.onmessage = (event) => {
 };
 
 // React syntax (jsx) is supported
-render(<App/>, document.getElementById('root'));
+render(<App />, document.getElementById('root'));
