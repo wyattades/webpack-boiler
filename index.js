@@ -132,11 +132,35 @@ module.exports = (config) => {
     if (page.favicon) page.favicon = callerPath(page.favicon);
   }
 
+  let includeReactHotLoader = false;
+  if (react) {
+    try {
+      require.resolve('react-hot-loader');
+      hasReactHotLoader = true;
+    } catch (_) {}
+  }
+
+  let includeReactHotLoaderDomPatch = false;
+  if (includeReactHotLoader && DEV) {
+    try {
+      require.resolve('@hot-loader/react-dom');
+      hasReactHotLoaderDomPatch = true;
+    } catch (_) {}
+  }
+
   // base Webpack config
   const baseConfig = {
     mode: process.env.NODE_ENV,
 
     context: __dirname,
+
+    resolve: {
+      alias: includeReactHotLoaderDomPatch
+        ? {
+            'react-dom': '@hot-loader/react-dom',
+          }
+        : {},
+    },
 
     module: {
       rules: [
@@ -146,7 +170,7 @@ module.exports = (config) => {
           include: PATHS.src,
         },
         {
-          test: /\.js$/,
+          test: /\.jsx?$/,
           loader: 'babel-loader',
           options: {
             cacheDirectory: true,
@@ -161,7 +185,7 @@ module.exports = (config) => {
               ],
             ],
             plugins: [
-              ...(react ? ['react-hot-loader/babel'] : []),
+              ...(includeReactHotLoader ? ['react-hot-loader/babel'] : []),
               ['@babel/plugin-proposal-class-properties', { loose: true }],
               '@babel/plugin-syntax-dynamic-import',
               '@babel/plugin-transform-runtime',
@@ -183,8 +207,7 @@ module.exports = (config) => {
               loader: 'postcss-loader',
               options: {
                 ident: 'postcss',
-                // TODO: necessary? use webpack's browserlist?
-                plugins: () => [autoprefixer()],
+                plugins: [autoprefixer],
               },
             },
             'sass-loader',
