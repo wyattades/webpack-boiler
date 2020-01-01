@@ -1,0 +1,25 @@
+name: Test and Publish to NPM
+
+on:
+  release:
+    types: [created]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: ianwalter/puppeteer@v2.0.0
+      - run: yarn
+      - run: yarn test
+
+  publish:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 11
+      - run: npm publish
+
