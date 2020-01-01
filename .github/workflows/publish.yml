@@ -2,19 +2,20 @@ name: Test and Publish to NPM
 
 on:
   release:
-    types:
-      - created
-      - edited
+    types: [created]
+  watch:
+    types: [started] # TODO: remove
 
 jobs:
   test:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v1
       - uses: actions/setup-node@v1
         with:
           node-version: 10
-      - name: Install dependencies
-        run: yarn install 
+      - name: Install test dependencies
+        run: yarn install --production=false
       - name: Run tests
         run: yarn test
 
