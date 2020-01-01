@@ -130,6 +130,18 @@ module.exports = (config) => {
     page.inject = false;
     page.template = page.template ? callerPath(page.template) : PATHS.template;
     if (page.favicon) page.favicon = callerPath(page.favicon);
+
+    page._headElements = (page.headElements || []).map((el) => {
+      const { tag, ...attr } = el || {};
+      if (!tag) throw new Error('No tag attribute in headElement');
+      return { tag, attr };
+    });
+
+    page._bodyElements = (page.bodyElements || []).map((el) => {
+      const { tag, ...attr } = el || {};
+      if (!tag) throw new Error('No tag attribute in bodyElement');
+      return { tag, attr };
+    });
   }
 
   let includeReactHotLoader = false;
@@ -271,6 +283,7 @@ module.exports = (config) => {
     const missing = [
       'lang',
       'name',
+      'display',
       'description',
       'theme_color',
       'icons',

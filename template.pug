@@ -1,24 +1,9 @@
 -
-  if (!htmlWebpackPlugin || !htmlWebpackPlugin.options)
+  if (typeof htmlWebpackPlugin !== 'object' || !htmlWebpackPlugin || !htmlWebpackPlugin.options)
     throw new Error('Must use html-webpack-plugin');
 
-  const { options, files } = htmlWebpackPlugin;
-
-  options.lang = options.lang || 'en-US';
-    
-  options.headElements = (options.headElements || []).map((el) => {
-    const tag = el.tag;
-    if (!tag) throw new Error('No tag attribute in headElement');
-    delete el.tag;
-    return { tag, attr: el };
-  });
-
-  options.bodyElements = (options.bodyElements || []).map((el) => {
-    const tag = el.tag;
-    if (!tag) throw new Error('No tag attribute in bodyElement');
-    delete el.tag;
-    return { tag, attr: el };
-  });
+  var options = htmlWebpackPlugin.options;
+  var files = htmlWebpackPlugin.files;
 
 doctype html
 
@@ -68,7 +53,7 @@ html(lang=options.lang)
     each val, key in files.css
       link(href=val rel='stylesheet')
 
-    each item in options.headElements
+    each item in options._headElements
       #{item.tag}&attributes(item.attr)
 
     each key in Object.keys(files.chunks)
@@ -90,5 +75,5 @@ html(lang=options.lang)
         each key in options.window
           != `window.${key} = '${options.window[key]}';`
 
-    each el in options.bodyElements
+    each el in options._bodyElements
       #{el.tag}&attributes(el.attr)

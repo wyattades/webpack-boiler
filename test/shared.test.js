@@ -1,5 +1,14 @@
 const waitForExpect = require('wait-for-expect');
 
+const hasCustomElements = async (container, elements) => {
+  for (const { tag, ...attr } of elements)
+    await expect(page).toMatchElement(
+      `${container || ''} ${tag}${Object.keys(attr)
+        .map((key) => `[${key}="${attr[key]}"]`)
+        .join('')}`,
+    );
+};
+
 let consoleOut = [];
 
 beforeAll(async () => {
@@ -17,19 +26,35 @@ describe('Head content', () => {
       description: 'This is a great website',
     };
 
-    for (const name in meta)
-      await expect(page).toMatchElement(
-        `head meta[name="${name}"][content="${meta[name]}"]`,
-      );
+    await hasCustomElements(
+      'head',
+      Object.keys(meta).map((name) => ({
+        tag: 'meta',
+        name,
+        content: meta[name],
+      })),
+    );
+  });
+
+  it('has custom headElements', async () => {
+    await hasCustomElements('head', [
+      {
+        tag: 'script',
+        src: 'not_found.js',
+      },
+    ]);
   });
 });
 
 describe('Page Content', () => {
-  // it('has javascript enabled', async () => {
-  //   await expect(page).not.toMatch(
-  //     'JavaScript must be enabled to run this page properly',
-  //   );
-  // });
+  it('has custom bodyElements', async () => {
+    await hasCustomElements('body', [
+      {
+        tag: 'div',
+        id: 'hidden_el',
+      },
+    ]);
+  });
 
   it('has dynamic text', async () => {
     await expect(page).toMatch('PAGE_URL=http://localhost:3033');
