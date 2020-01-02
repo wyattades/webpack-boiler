@@ -3,8 +3,6 @@ name: Test and Publish
 on:
   release:
     types: [created]
-  watch:
-    types: [started] # TODO: remove
 
 jobs:
   test:
