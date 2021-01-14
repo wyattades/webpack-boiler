@@ -55,4 +55,10 @@ describe('Changing source files hot-reloads', () => {
     },
     10000,
   );
+
+  test('serves static files from `public` directory', async () => {
+    await page.goto('http://localhost:3033/inner/file.txt');
+
+    await expect(page).toMatch(/abcd/);
+  });
 });

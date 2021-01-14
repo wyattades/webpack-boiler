@@ -4,9 +4,14 @@ module.exports = require('../index')({
     display: 'standalone',
     background_color: '#FF0000',
   },
+  offline: process.env.NODE_ENV === 'production',
   entry: {
     foo: './src/customEntryPoint',
-    bar: './src/anotherEntryPoint',
+    // TEMP: webpack-dev-server hot reload doesn't work with multiple entry points,
+    // waiting for https://github.com/webpack/webpack-dev-server/pull/2920
+    ...(process.env.NODE_ENV === 'development'
+      ? {}
+      : { bar: './src/anotherEntryPoint' }),
   },
   output: 'myBuildDirectory',
   devPort: 8000,

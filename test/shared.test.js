@@ -61,7 +61,7 @@ describe('Page Content', () => {
     await expect(page).toMatch('STATIC_PROP=foo');
     await expect(page).toMatch('THIS_PROP=bar');
     await expect(page).toMatch('DYNAMIC=Cats');
-    await expect(page).toMatch(`NODE_ENV=${process.env.NODE_ENV}`);
+    await expect(page).toMatch(`NODE_ENV=${process.env.JEST_SERVER_NODE_ENV}`);
   });
 
   it('has correct console output', async () => {
@@ -71,10 +71,14 @@ describe('Page Content', () => {
 
     expect(consoleOut).toEqual(
       expect.arrayContaining([
-        "This doesn't do much...",
+        // TEMP: see ./webpack.config.js
+        ...(process.env.JEST_SERVER_NODE_ENV === 'development'
+          ? []
+          : ["This doesn't do much..."]),
         'Worker file loaded.',
         'Parent received: {"foo":"foo"}',
         'Received message: "cow"',
+        'Typescript loaded',
       ]),
     );
   });

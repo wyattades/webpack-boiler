@@ -32,7 +32,7 @@ describe('Build Tests', () => {
     expect(files.find((f) => f.match(/^foo\..+?\.js$/))).toBeTruthy();
     expect(files.find((f) => f.match(/^foo\..+?\.css$/))).toBeTruthy();
     expect(files.find((f) => f.match(/^bar\..+?\.js$/))).toBeTruthy();
-    expect(files.find((f) => f.match(/^0\..+?\.js$/))).toBeTruthy();
+    expect(files.find((f) => f.match(/^buzz\..+?\.js$/))).toBeTruthy();
     expect(files.find((f) => f.match(/^.+?\.worker\.js$/))).toBeTruthy();
   });
 });

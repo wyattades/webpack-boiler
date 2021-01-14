@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
 import { hot } from 'react-hot-loader/root';
+import React, { useState, useEffect } from 'react';
 
 const Hooked = () => {
   const [text, setText] = useState('');
@@ -25,7 +25,7 @@ class App extends React.Component {
   };
 
   async componentDidMount() {
-    await import('./dynamic').then((dynamic) => {
+    await import(/* webpackChunkName: "buzz" */ './dynamic').then((dynamic) => {
       this.setState({ dynamic: dynamic.default() });
     });
 

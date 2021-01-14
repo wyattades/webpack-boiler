@@ -4,6 +4,7 @@
 
   var options = htmlWebpackPlugin.options;
   var files = htmlWebpackPlugin.files;
+  var URL = require('url');
 
 doctype html
 
@@ -38,7 +39,7 @@ html(lang=options.lang)
     if (files.favicon || options.faviconExternal)
       link(href=(files.favicon || options.faviconExternal) rel='icon' sizes='192x192' type='image/png')
     if ((files.favicon && options.url) || options.faviconExternal)
-      meta(property='og:image' content=((files.favicon && options.url) ? `${options.url}/${files.favicon}` : options.faviconExternal))
+      meta(property='og:image' content=((files.favicon && options.url) ? URL.resolve(options.url, files.favicon) : options.faviconExternal))
       meta(property='og:image:width' content='192')
       meta(property='og:image:height' content='192')
 
@@ -50,14 +51,11 @@ html(lang=options.lang)
     if (options.mobile !== false)
       meta(content='width=device-width, initial-scale=1' name='viewport')
 
-    each val, key in files.css
-      link(href=val rel='stylesheet')
+    each href in (files.css || [])
+      link(href=href rel='stylesheet')
 
     each item in options._headElements
       #{item.tag}&attributes(item.attr)
-
-    each key in Object.keys(files.chunks)
-      script(src=files.chunks[key].entry defer type='text/javascript')
 
   body
 
@@ -69,6 +67,9 @@ html(lang=options.lang)
       div(id=options.appMountId)
         if (options.loader)
           != options.loader
+
+    each href in (files.js || [])
+      script(src=href)
 
     if (options.window)
       script(type='text/javascript')
