@@ -1,6 +1,6 @@
 {
   "name": "webpack-boiler",
-  "version": "0.4.2",
+  "version": "0.5.0",
   "scripts": {
     "test": "bash test/run_tests.sh",
     "test-dev": "NODE_ENV=development jest test/development.test.js"
